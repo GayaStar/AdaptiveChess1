@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chess vs Stockfish</title>
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .board-container {
+            flex: 1;
+            min-width: 400px;
+        }
+
+        .info-container {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .highlight-white {
+            box-shadow: inset 0 0 3px 3px rgba(255, 255, 150, 0.8);
+        }
+
+        .highlight-black {
+            box-shadow: inset 0 0 3px 3px rgba(100, 100, 255, 0.8);
+        }
+
+        .button-group {
+            margin: 15px 0;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .game-info {
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .status {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        #move-list {
+            min-height: 40px;
+            font-family: monospace;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Removed localStorage login check. Session-based auth is handled in main.js -->
+    <h1>Chess vs Stockfish</h1>
+    <div class="container">
+        <div class="board-container">
+            <div id="myBoard" style="width: 100%"></div>
+            <div class="button-group">
+                <button id="startBtn">New Game</button>
+                <button id="undoBtn">Undo Move</button>
+            </div>
+        </div>
+        <div class="info-container">
+            <div class="game-info">
+                <h2>Game Settings</h2>
+                <div>
+                    <h3>Play as:</h3>
+                    <div class="button-group">
+                        <button id="playAsWhite">White</button>
+                        <button id="playAsBlack">Black</button>
+                    </div>
+                </div>
+                <div>
+                    <h3>Player Information</h3>
+                    <p>Your Rating: <span id="playerRating">1200</span></p>
+                    <p>Stockfish Level: <span id="stockfishLevel">0</span></p>
+                    <p>Stockfish Depth: <span id="stockfishDepth">5</span></p>
+                </div>
+            </div>
+            <div class="game-info">
+                <h2>Game Status</h2>
+                <p class="status" id="status">Choose your color to start</p>
+                <h2>Move List</h2>
+                <div id="move-list"></div>
+            </div>
+        </div>
+    </div>
+    <button onclick="logout()">Logout</button>
+    <script>
+        function logout() {
+            fetch('http://localhost:8080/logout', {
+                method: 'POST',
+                credentials: 'include'
+            })
+                .then(() => {
+                    window.location.href = "login.html";
+                });
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="chessboardjs-themes.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

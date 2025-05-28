@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up - Chess App</title>
+</head>
+<body>
+    <h2>Sign Up</h2>
+    <input id="signup-username" placeholder="Username">
+    <input id="signup-password" placeholder="Password" type="password">
+    <button onclick="signup()">Sign Up</button>
+    <div id="signup-status"></div>
+    <p>Already have an account? <a href="login.html">Login here</a></p>
+    <script>
+    function signup() {
+        const username = document.getElementById('signup-username').value;
+        const password = document.getElementById('signup-password').value;
+
+        fetch('/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ username, password })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.msg === "Signup successful") {
+                window.location.href = "login.html";
+            } else {
+                document.getElementById('signup-status').innerText = data.msg;
+            }
+        })
+        .catch(err => {
+            document.getElementById('signup-status').innerText = "Error signing up";
+        });
+    }
+    </script>
+</body>
+</html>
