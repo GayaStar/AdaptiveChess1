@@ -3,7 +3,6 @@ this is a reinforcement+stockfish chess website (under progress)
 
 Frontend Module Descriptions (public/js/)
 
-File Description
 main.js:	Entry point for the app. Fetches session data, initializes Stockfish, board, and sets up UI event listeners.
 
 state.js:	Centralized state manager. Exposes getter/setter functions for global game state variables like board, game, rating, etc.
