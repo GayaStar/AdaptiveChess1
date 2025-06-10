@@ -9,11 +9,12 @@ import {
     setStockfishThinking,
     hasGameEnded,
     setGameEnded,
-    getBoard 
+    getBoard
 } from './state.js';
 
 import { highlightLastMove } from './board.js';
 import { updateUI, updateStatus } from './ui.js';
+import { convertUciToSan } from './utils.js'; // At top
 
 export function loadStockfish() {
     return new Promise((resolve, reject) => {
@@ -68,9 +69,37 @@ export function makeStockfishMove() {
     stockfish.postMessage(`go depth ${getStockfishDepth()}`);
 }
 
+function speak(text) {
+    const spoken = formatSANForSpeech(text);
+    const synth = window.speechSynthesis;
+    const utterance = new SpeechSynthesisUtterance(spoken);
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    synth.speak(utterance);
+}
+
+function formatSANForSpeech(san) {
+    if (san === 'O-O') return 'Castles kingside';
+    if (san === 'O-O-O') return 'Castles queenside';
+
+    // Expand SAN symbols for clarity
+    san = san.replace(/x/g, ' takes ');
+    san = san.replace(/=/g, ' promotes to ');
+
+    // Optionally, expand piece letters for clarity
+    san = san.replace(/K/g, 'King ');
+    san = san.replace(/Q/g, 'Queen ');
+    san = san.replace(/R/g, 'Rook ');
+    san = san.replace(/B/g, 'Bishop ');
+    san = san.replace(/N/g, 'Knight ');
+
+    // Remove extra spaces
+    return san.replace(/\s+/g, ' ').trim();
+}
+
 function onStockfishMessage(message) {
     const game = getGame();
-    const board = getBoard(); 
+    const board = getBoard();
 
     if (typeof message !== 'string') return;
 
@@ -79,21 +108,32 @@ function onStockfishMessage(message) {
         const match = message.match(moveRegex);
         if (match && match[1]) {
             const moveString = match[1];
-            const move = game.move({
+            const originalFen = game.fen(); // Capture FEN before making move
+            
+            // Make the move on a temporary game instance for SAN conversion
+            const tempGame = new Chess(originalFen);
+            const tempMove = tempGame.move({
                 from: moveString.substring(0, 2),
                 to: moveString.substring(2, 4),
                 promotion: moveString.length === 5 ? moveString.substring(4, 5) : undefined
             });
 
-            if (move && board) {
-                board.position(game.fen()); 
-                highlightLastMove(move, false);
-                updateUI();
-                setStockfishThinking(false);
+            if (tempMove) {
+                const san = tempMove.san; // Get accurate SAN from temporary game
+                
+                // Now make the actual move on the real game
+                const realMove = game.move(tempMove);
+                if (realMove && board) {
+                    board.position(game.fen());
+                    highlightLastMove(realMove, false);
+                    speak(san); // Use the properly converted SAN
+                    updateUI();
+                    setStockfishThinking(false);
 
-                if (game.game_over() && !hasGameEnded()) {
-                    updateStatus();
-                    setGameEnded(true);
+                    if (game.game_over() && !hasGameEnded()) {
+                        updateStatus();
+                        setGameEnded(true);
+                    }
                 }
             }
         }
