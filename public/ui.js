@@ -72,6 +72,7 @@ export function updateStatus() {
 
 function updateRatings(result) {
   const playerRating = getPlayerRating();
+<<<<<<< HEAD
   const stockfishRating = 1000 + getStockfishLevel() * 100;
   let updatedRating = playerRating;
   let level = getStockfishLevel();
@@ -88,6 +89,45 @@ function updateRatings(result) {
       updatedRating += Math.round(32 * (0 - expected));
       level = Math.max(0, level - 1);
       depth = Math.max(1, depth - 1);
+=======
+
+  // Only update Stockfish level/depth if playing against Stockfish
+  const isVsStockfish = playerRating >= 1200;
+
+  let updatedRating = playerRating;
+  const expected = 1 / (1 + Math.pow(10, ((1000 + getStockfishLevel() * 100) - playerRating) / 400));
+
+  if (typeof result === 'boolean') {
+    updatedRating += Math.round(32 * (result ? (1 - expected) : (0 - expected)));
+  } else {
+    updatedRating += Math.round(32 * (0.5 - expected));
+  }
+
+  updatedRating = Math.max(100, updatedRating);
+  setPlayerRating(updatedRating);
+  $('#playerRating').text(updatedRating);
+
+  // Always update player rating
+  fetch('/update_rating', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ rating: updatedRating })
+  });
+
+  if (isVsStockfish) {
+    let level = getStockfishLevel();
+    let depth = getStockfishDepth();
+
+    if (typeof result === 'boolean') {
+      if (result) {
+        level = Math.min(20, level + 1);
+        depth = Math.min(15, depth + 1);
+      } else {
+        level = Math.max(0, level - 1);
+        depth = Math.max(1, depth - 1);
+      }
+>>>>>>> f0ed628 (rl agent added; code optimized)
     }
   } else {
     updatedRating += Math.round(32 * (0.5 - expected));
