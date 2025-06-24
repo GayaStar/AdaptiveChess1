@@ -1,0 +1,5 @@
+Flask==2.2.5
+Flask-Cors==3.0.10
+python-chess==1.999
+torch==2.0.1
+requests
