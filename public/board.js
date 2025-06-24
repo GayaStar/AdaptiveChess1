@@ -1,5 +1,3 @@
-// board.js
-
 import {
     getGame,
     getPlayerColor,
@@ -7,10 +5,12 @@ import {
     setBoard,
     hasGameEnded,
     isStockfishThinking,
-    setStockfishThinking
+    setStockfishThinking,
+    getPlayerRating
 } from './state.js';
 
 import { makeStockfishMove } from './stockfish.js';
+import { makeRLMove } from './rl_agent.js'; // ✅ RL agent support
 import { updateUI, updateStatus } from './ui.js';
 
 export function initializeBoard() {
@@ -46,7 +46,7 @@ function onDrop(source, target) {
     const move = game.move({
         from: source,
         to: target,
-        promotion: 'q'
+        promotion: 'q' // always promote to queen by default
     });
 
     if (!move) return 'snapback';
@@ -59,7 +59,16 @@ function onDrop(source, target) {
         return;
     }
 
-    setTimeout(makeStockfishMove, 250);
+    setTimeout(makeEngineMove, 250); // ✅ Use dynamic engine logic
+}
+
+function makeEngineMove() {
+    const rating = getPlayerRating();
+    if (rating < 1200) {
+        makeRLMove(rating); // RL agent for lower-rated players
+    } else {
+        makeStockfishMove(); // Stockfish for 1200+
+    }
 }
 
 function onMoveEnd() {

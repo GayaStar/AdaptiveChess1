@@ -1,11 +1,9 @@
-// state.js
-
 let gameInstance = null;
 let boardInstance = null;
 let stockfishInstance = null;
 let playerColor = 'w';
 let isStockfishTurn = false;
-let playerRating = 1200;
+let playerRating = 1000;
 let stockfishLevel = 0;
 let stockfishDepth = 5;
 let gameEnded = false;
@@ -43,3 +41,14 @@ export function isGameSaved() { return gameSaved; }
 export function setGameSaved(status) { gameSaved = status; }
 
 export function getApiUrl() { return API; }
+
+// ✅ RL Agent support (user-specific)
+let userId = null;
+
+export function setUserId(id) {
+  userId = id;
+}
+
+export function getUserId() {
+  return userId;
+}

@@ -1,11 +1,10 @@
-// ui-events.js
-
 import { startNewGame, undoMove, switchPlayerColor } from './game.js';
 import { generateAnalysis } from './analysis.js';
-import { getGame, getBoard } from './state.js';
+import { getGame, getBoard, getPlayerRating } from './state.js';
 import { highlightLastMove } from './board.js';
 import { updateUI, updateStatus } from './ui.js';
 import { makeStockfishMove } from './stockfish.js';
+import { makeRLMove } from './rl_agent.js';
 
 export function setupUIEvents() {
   document.getElementById('startBtn').addEventListener('click', startNewGame);
@@ -47,7 +46,13 @@ document.getElementById('speakMoveBtn').addEventListener('click', () => {
       return;
     }
 
-    setTimeout(makeStockfishMove, 500);
+    // ✅ Use RL or Stockfish based on rating
+    const rating = getPlayerRating();
+    if (rating < 1200) {
+      makeRLMove(rating);
+    } else {
+      makeStockfishMove();
+    }
   };
 
   recognition.onerror = (event) => {
@@ -62,33 +67,26 @@ function normalizeSAN(spoken) {
   if (raw.includes('kingside')) return 'O-O';
   if (raw.includes('queenside')) return 'O-O-O';
 
-  // Replace piece names with SAN letters
   raw = raw
     .replace(/king/g, 'K')
     .replace(/queen/g, 'Q')
     .replace(/rook/g, 'R')
     .replace(/bishop/g, 'B')
     .replace(/(knight|night)/g, 'N')
-    .replace(/pawn/g, '') // pawns are silent in SAN
-
-    // Handle verbal captures like "cross"
+    .replace(/pawn/g, '')
     .replace(/cross/g, 'x')
     .replace(/equals/g, '=');
 
-  // Fix for accidental lowercasing of valid SAN like "bxc6" (pawn moves)
   const game = getGame();
   const legalMoves = game.moves();
 
-  // Exact match
   const exact = legalMoves.find(move => move.toLowerCase() === raw);
   if (exact) return exact;
 
-  // If it starts with a piece letter (not a-h), capitalize it
   if (/^[nbrqk]/.test(raw)) {
     raw = raw.charAt(0).toUpperCase() + raw.slice(1);
   }
 
-  // Try fuzzy match only for piece moves
   if (/^[NBRQK]/.test(raw)) {
     const fuzzy = legalMoves.find(move => move.toLowerCase().includes(raw));
     if (fuzzy) return fuzzy;

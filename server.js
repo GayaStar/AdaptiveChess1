@@ -66,7 +66,7 @@ app.post('/signup', async (req, res) => {
     await usersCollection.insertOne({ 
       username, 
       password: hash,
-      rating: 1200,
+      rating: 1000,
       stockfishLevel: 0,
       stockfishDepth: 5
     });
@@ -180,5 +180,5 @@ app.post('/logout', (req, res) => {
 // Server setup
 const server = http.createServer(app);
 server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/`);
+  console.log(`Server running at http://localhost:${PORT}/login.html`);
 });

@@ -1,5 +1,4 @@
-// game.js
-
+//game.js
 import {
     setGame,
     getGame,
@@ -11,9 +10,11 @@ import {
     getApiUrl,
     getPlayerRating,
     isStockfishThinking,
-    setStockfishThinking
+    setStockfishThinking,
+    getStockfish
 } from './state.js';
 
+import { makeRLMove } from './rl_agent.js';
 import { updateUI } from './ui.js';
 import { clearHighlights } from './board.js';
 import { makeStockfishMove } from './stockfish.js';
@@ -33,8 +34,14 @@ export function startNewGame() {
     setGameSaved(false);
     updateUI();
 
+    // 👇 If playing as black, let the engine play first move
     if (getPlayerColor() === 'b') {
-        setTimeout(makeStockfishMove, 250);
+        const rating = getPlayerRating();
+        if (rating < 1200) {
+            makeRLMove(rating);
+        } else {
+            makeStockfishMove();
+        }
     }
 }
 
@@ -47,15 +54,16 @@ export function undoMove() {
 
     if (game.history().length <= 0) return;
 
+    // ❌ Stop Stockfish thinking, if needed
     if (isStockfishThinking()) {
         const sf = getStockfish();
         if (sf) sf.postMessage('stop');
         setStockfishThinking(false);
     }
 
-    game.undo();
+    game.undo();  // undo user move
     if (game.history().length > 0) {
-        game.undo();
+        game.undo();  // undo engine move
     }
 
     board.position(game.fen());
@@ -69,7 +77,7 @@ export function switchPlayerColor(color) {
     setPlayerColor(color);
     const board = getBoard();
     board.orientation(color === 'w' ? 'white' : 'black');
-    startNewGame();
+    startNewGame();  // restart with new color
 }
 
 export function saveGameToDB(moves, result) {

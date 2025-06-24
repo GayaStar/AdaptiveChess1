@@ -11,7 +11,7 @@ import {
     setGameEnded,
     getBoard
 } from './state.js';
-
+import { speak } from './voice-utils.js';
 import { highlightLastMove } from './board.js';
 import { updateUI, updateStatus } from './ui.js';
 import { convertUciToSan } from './utils.js'; // At top
@@ -67,34 +67,6 @@ export function makeStockfishMove() {
     stockfish.postMessage('ucinewgame');
     stockfish.postMessage(`position fen ${game.fen()}`);
     stockfish.postMessage(`go depth ${getStockfishDepth()}`);
-}
-
-function speak(text) {
-    const spoken = formatSANForSpeech(text);
-    const synth = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(spoken);
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
-    synth.speak(utterance);
-}
-
-function formatSANForSpeech(san) {
-    if (san === 'O-O') return 'Castles kingside';
-    if (san === 'O-O-O') return 'Castles queenside';
-
-    // Expand SAN symbols for clarity
-    san = san.replace(/x/g, ' takes ');
-    san = san.replace(/=/g, ' promotes to ');
-
-    // Optionally, expand piece letters for clarity
-    san = san.replace(/K/g, 'King ');
-    san = san.replace(/Q/g, 'Queen ');
-    san = san.replace(/R/g, 'Rook ');
-    san = san.replace(/B/g, 'Bishop ');
-    san = san.replace(/N/g, 'Knight ');
-
-    // Remove extra spaces
-    return san.replace(/\s+/g, ' ').trim();
 }
 
 function onStockfishMessage(message) {
