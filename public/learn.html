@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chess Piece Moves</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        text-align: center;
+        padding: 1rem;
+        background-color: #f2f2f2;
+      }
+
+      #board {
+        display: grid;
+        grid-template-columns: repeat(8, 60px);
+        grid-template-rows: repeat(8, 60px);
+        width: fit-content;
+        margin: 20px auto;
+        border: 2px solid #444;
+      }
+
+      .square {
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        text-align: center;
+        font-size: 32px;
+        font-weight: bold;
+      }
+
+      .light {
+        background-color: #fff;
+        color: black;
+      }
+
+      .dark {
+        background-color: #000;
+        color: white;
+      }
+
+      .highlight {
+        background-color: yellow !important;
+        color: black;
+      }
+
+      .controls {
+        margin-bottom: 1rem;
+      }
+
+      button {
+        margin: 0.3rem;
+        padding: 0.5rem 1rem;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      #notationBox {
+        font-size: 1.1rem;
+        margin-top: 1rem;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Chess Piece Move Highlighter</h2>
+
+    <div class="controls">
+      <button onclick="highlightMoves('pawn')">Pawn</button>
+      <button onclick="highlightMoves('rook')">Rook</button>
+      <button onclick="highlightMoves('knight')">Knight</button>
+      <button onclick="highlightMoves('bishop')">Bishop</button>
+      <button onclick="highlightMoves('queen')">Queen</button>
+      <button onclick="highlightMoves('king')">King</button>
+    </div>
+
+    <div id="board"></div>
+    <div id="notationBox"></div>
+
+    <script>
+      const board = document.getElementById("board");
+
+      // Create 8x8 board
+      for (let i = 0; i < 64; i++) {
+        const square = document.createElement("div");
+        square.className =
+          "square " + ((Math.floor(i / 8) + i) % 2 === 0 ? "light" : "dark");
+        square.dataset.index = i;
+        board.appendChild(square);
+      }
+
+      function resetBoard() {
+        document.querySelectorAll(".square").forEach((sq) => {
+          sq.classList.remove("highlight");
+          sq.textContent = "";
+        });
+      }
+
+      function getPieceSymbol(piece, side) {
+        const symbols = {
+          white: {
+            pawn: "♙",
+            rook: "♖",
+            knight: "♘",
+            bishop: "♗",
+            queen: "♕",
+            king: "♔",
+          },
+          black: {
+            pawn: "♟",
+            rook: "♜",
+            knight: "♞",
+            bishop: "♝",
+            queen: "♛",
+            king: "♚",
+          },
+        };
+        return symbols[side][piece];
+      }
+
+      function highlightMoves(piece) {
+        resetBoard();
+
+        const sides = ["white", "black"];
+        const side = sides[Math.floor(Math.random() * 2)];
+
+        const center = 27; // d4
+        const squares = document.querySelectorAll(".square");
+        squares[center].textContent = getPieceSymbol(piece, side);
+
+        const row = Math.floor(center / 8);
+        const col = center % 8;
+        let offsets = [];
+
+        switch (piece) {
+          case "pawn":
+            offsets = side === "white" ? [-8, -16] : [8, 16];
+            break;
+
+          case "rook":
+            for (let i = col + 1; i < 8; i++)
+              offsets.push(row * 8 + i - center);
+            for (let i = col - 1; i >= 0; i--)
+              offsets.push(row * 8 + i - center);
+            for (let i = row + 1; i < 8; i++)
+              offsets.push(i * 8 + col - center);
+            for (let i = row - 1; i >= 0; i--)
+              offsets.push(i * 8 + col - center);
+            break;
+
+          case "knight":
+            offsets = [-17, -15, -10, -6, 6, 10, 15, 17];
+            break;
+
+          case "bishop":
+            for (let dr = -1; dr <= 1; dr += 2) {
+              for (let dc = -1; dc <= 1; dc += 2) {
+                for (let i = 1; i < 8; i++) {
+                  const r = row + dr * i;
+                  const c = col + dc * i;
+                  if (r >= 0 && r < 8 && c >= 0 && c < 8) {
+                    offsets.push(r * 8 + c - center);
+                  } else break;
+                }
+              }
+            }
+            break;
+
+          case "queen":
+            for (let i = col + 1; i < 8; i++)
+              offsets.push(row * 8 + i - center);
+            for (let i = col - 1; i >= 0; i--)
+              offsets.push(row * 8 + i - center);
+            for (let i = row + 1; i < 8; i++)
+              offsets.push(i * 8 + col - center);
+            for (let i = row - 1; i >= 0; i--)
+              offsets.push(i * 8 + col - center);
+            for (let dr = -1; dr <= 1; dr += 2) {
+              for (let dc = -1; dc <= 1; dc += 2) {
+                for (let i = 1; i < 8; i++) {
+                  const r = row + dr * i;
+                  const c = col + dc * i;
+                  if (r >= 0 && r < 8 && c >= 0 && c < 8) {
+                    offsets.push(r * 8 + c - center);
+                  } else break;
+                }
+              }
+            }
+            break;
+
+          case "king":
+            offsets = [-1, 1, -8, 8, -9, 9, -7, 7];
+            break;
+        }
+
+        for (let offset of offsets) {
+          const target = center + offset;
+          if (target >= 0 && target < 64) {
+            const square = squares[target];
+            if (square) square.classList.add("highlight");
+          }
+        }
+
+        // Show move notation with side
+        const notationBox = document.getElementById("notationBox");
+        const moveExamples = {
+          pawn: {
+            white: "White Pawn moves: e4, exd5, e5+",
+            black: "Black Pawn moves: e5, exd4, e1=Q",
+          },
+          rook: {
+            white: "White Rook moves: Re1, Rxe5, Rd8+",
+            black: "Black Rook moves: ...Re8, Rxa4, Rh1#",
+          },
+          knight: {
+            white: "White Knight moves: Nf3, Nxd4, Nc6+",
+            black: "Black Knight moves: Nf6, Nxe4, Nd3+",
+          },
+          bishop: {
+            white: "White Bishop moves: Be3, Bxf6, Bg5+",
+            black: "Black Bishop moves: Bc5, Bxe4, Bh6",
+          },
+          queen: {
+            white: "White Queen moves: Qh5, Qxe4+, Qd8#",
+            black: "Black Queen moves: Qb6, Qxf2+, Qg1#",
+          },
+          king: {
+            white: "White King moves: Kf2, Kxe1, O-O",
+            black: "Black King moves: Kf7, Kxd8, O-O-O",
+          },
+        };
+
+        const symbol = getPieceSymbol(piece, side);
+        const desc = moveExamples[piece][side];
+
+        notationBox.innerHTML = `<strong>${symbol} ${desc}</strong>`;
+      }
+    </script>
+  </body>
+</html>

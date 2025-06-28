@@ -1,71 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Sign Up - Chess App</title>
-    <style>
-    body {
+  <meta charset="UTF-8">
+  <title>Sign Up - Chess App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
       font-family: Arial, sans-serif;
-      padding: 40px;
-      max-width: 400px;
-      margin: auto;
-      background: #f9f9f9;
+    }
+
+    body {
+      position: relative;
+      background: #000;
+      color: white;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: url('chess-piece.jpg') no-repeat center center;
+      background-size: cover;
+      filter: blur(8px) brightness(0.6);
+      z-index: -1;
+    }
+
+    .signup-wrapper {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .signup-box {
+      width: 100%;
+      max-width: 450px;
+      padding: 50px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .signup-box h2 {
+      margin-bottom: 25px;
+      text-align: center;
+      color: white;
+      font-size: 1.8rem;
     }
 
     input {
-      display: block;
       width: 100%;
-      margin: 10px 0;
-      padding: 10px;
+      margin: 12px 0;
+      padding: 12px;
       font-size: 1rem;
+      border: 1px solid #555;
+      border-radius: 4px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      outline: none;
+    }
+
+    input:focus {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: #1976d2;
+    }
+
+    input::placeholder {
+      color: #ccc;
+    }
+
+    input:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
+      -webkit-text-fill-color: white !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
+    input:-moz-autofill {
+      box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
+      -moz-text-fill-color: white !important;
     }
 
     button {
-      padding: 10px 16px;
+      width: 100%;
+      padding: 12px;
       font-weight: bold;
       background: #1976d2;
       color: white;
       border: none;
-      cursor: pointer;
       border-radius: 4px;
+      cursor: pointer;
+      margin-top: 12px;
+      font-size: 1rem;
     }
 
     #signup-status {
-      margin-top: 10px;
-      color: red;
+      margin-top: 12px;
+      color: #ff5555;
+      text-align: center;
+    }
+
+    p {
+      text-align: center;
+      margin-top: 14px;
+      color: #ccc;
+    }
+
+    a {
+      color: #4dabf7;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-    <h2>Sign Up</h2>
-    <input id="signup-username" placeholder="Username">
-    <input id="signup-password" placeholder="Password" type="password">
-    <button onclick="signup()">Sign Up</button>
-    <div id="signup-status"></div>
-    <p>Already have an account? <a href="login.html">Login here</a></p>
-    <script>
-    function signup() {
-        const username = document.getElementById('signup-username').value;
-        const password = document.getElementById('signup-password').value;
+  <div class="signup-wrapper">
+    <div class="signup-box">
+      <h2>Sign Up</h2>
+      <input id="signup-username" placeholder="Username">
+      <input id="signup-password" placeholder="Password" type="password">
+      <button onclick="signup()">Sign Up</button>
+      <div id="signup-status"></div>
+      <p>Already have an account? <a href="login.html">Login here</a></p>
+    </div>
+  </div>
 
-        fetch('/signup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ username, password })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.msg === "Signup successful") {
-                window.location.href = "login.html";
-            } else {
-                document.getElementById('signup-status').innerText = data.msg;
-            }
-        })
-        .catch(err => {
-            document.getElementById('signup-status').innerText = "Error signing up";
-        });
+  <script>
+    function signup() {
+      const username = document.getElementById('signup-username').value;
+      const password = document.getElementById('signup-password').value;
+
+      fetch('/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.msg === "Signup successful") {
+          window.location.href = "login.html";
+        } else {
+          document.getElementById('signup-status').innerText = data.msg;
+        }
+      })
+      .catch(() => {
+        document.getElementById('signup-status').innerText = "Error signing up";
+      });
     }
-    </script>
+  </script>
 </body>
 </html>
