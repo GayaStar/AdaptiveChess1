@@ -1,292 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Chess vs Stockfish</title>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        font-family: "Roboto", sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #000;
-      }
 
-      .navbar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 999;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #000;
-        color: white;
-        padding: 14px 20px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-      }
+<head>
+  <meta charset="UTF-8" />
+  <title>AdaptiveChess</title>
+  <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Roboto", sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('chess-bgg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
 
-      .navbar h1 {
-        margin: 0;
-        font-size: 1.5em;
-      }
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #000;
+      color: white;
+      padding: 14px 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
 
-      .navbar-buttons {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-      }
+    .navbar h1 {
+      margin: 0;
+      font-size: 1.5em;
+    }
 
-      .navbar button {
-        background: white;
-        color: black;
-        padding: 6px 12px;
-        border: none;
-        border-radius: 4px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.2s ease;
-      }
+    .navbar-buttons {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
 
-      .navbar button:hover {
-        background: #e3e3e3;
-      }
+    .navbar button {
+      background: white;
+      color: black;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
 
-      .container {
-        display: flex;
-        align-items: flex-start;
-        gap: 20px;
-        padding: 20px;
-        padding-top: 80px;
-        width: fit-content;
-        margin: 0 auto;
-      }
+    .navbar button:hover {
+      background: #e3e3e3;
+    }
 
-      .board-container {
-        width: 480px;
-        padding: 10px;
-        background: rgba(40, 40, 40, 0.85);
-        border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        color: white;
-      }
+    .container {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 20px;
+      padding-top: 80px;
+      width: fit-content;
+      margin: 0 auto;
+    }
 
-      .right-panel {
-        width: 300px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-      .side-panel {
-        background: rgba(40, 40, 40, 0.85);
-        padding: 15px;
-        border-radius: 8px;
-        border: 1px solid #444;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        color: white;
-      }
+    .board-wrapper {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 4px;
+    }
 
-      .game-controls {
-        display: flex;
-        gap: 20px;
-        margin-top: 20px;
-      }
+    .rank-labels {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 480px;
+      padding-top: 4px;
+    }
 
-      .button-group {
-        margin: 15px 0;
-      }
+    .rank-labels span {
+      height: 60px;
+      line-height: 60px;
+      font-weight: bold;
+      color: white;
+      font-size: 16px;
+      text-align: center;
+    }
 
-      button {
-        padding: 8px 14px;
-        border: none;
-        background: #1976d2;
-        color: white;
-        border-radius: 4px;
-        font-weight: bold;
-        transition: background 0.2s ease;
-        cursor: pointer;
-      }
+    .board-and-files {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-      button:hover {
-        background: #125aa0;
-      }
+    #myBoard {
+      width: 480px;
+    }
 
-      .game-status {
-        margin: 15px 0;
-      }
+    .file-labels {
+      display: flex;
+      justify-content: space-between;
+      width: 480px;
+      padding-top: 4px;
+    }
 
-      #move-list {
-        height: 160px;
-        overflow-y: auto;
-        font-family: monospace;
-        background: #222;
-        border: 1px solid #555;
-        border-radius: 4px;
-        padding: 8px;
-        margin-top: 10px;
-        white-space: pre-wrap;
-        word-break: break-word;
-        color: white;
-      }
+    .file-labels span {
+      width: 60px;
+      text-align: center;
+      font-weight: bold;
+      color: white;
+      font-size: 16px;
+    }
 
-      #move-list::-webkit-scrollbar {
-        width: 8px;
-      }
+    .game-controls {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+    }
 
-      #move-list::-webkit-scrollbar-track {
-        background: #333;
-      }
+    .button-group {
+      display: flex;
+      gap: 12px;
+    }
 
-      #move-list::-webkit-scrollbar-thumb {
-        background: #777;
-        border-radius: 4px;
-      }
+    button {
+      padding: 8px 14px;
+      border: none;
+      background: #1976d2;
+      color: white;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: background 0.2s ease;
+      cursor: pointer;
+    }
 
-      #move-list::-webkit-scrollbar-thumb:hover {
-        background: #999;
-      }
+    button:hover {
+      background: #125aa0;
+    }
 
-      .analysis-controls {
-        margin-top: 20px;
-      }
+    .right-panel {
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
-      .analysis-output {
-        margin-top: 10px;
-        max-height: 160px;
-        overflow-y: auto;
-        padding-right: 5px;
-        color: white;
-      }
+    .side-panel {
+      background: rgba(40, 40, 40, 0.85);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      color: white;
+    }
 
-      .analysis-entry {
-        padding: 10px;
-        margin: 8px 0;
-        border-radius: 4px;
-        background: #333;
-        border-left: 4px solid #ccc;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-      }
+    .game-status {
+      margin: 15px 0;
+    }
 
-      .good {
-        border-left-color: #4caf50;
-        background-color: #2e4732;
-      }
+    #move-list {
+      height: 160px;
+      overflow-y: auto;
+      font-family: monospace;
+      background: #222;
+      border: 1px solid #555;
+      border-radius: 4px;
+      padding: 8px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: white;
+    }
 
-      .mistake {
-        border-left-color: #ffc107;
-        background-color: #4e4a28;
-      }
+    .analysis-controls {
+      margin-top: 20px;
+    }
 
-      .blunder {
-        border-left-color: #f44336;
-        background-color: #5a2c2c;
-      }
+    .analysis-output {
+      margin-top: 10px;
+      max-height: 160px;
+      overflow-y: auto;
+      padding-right: 5px;
+      color: white;
+    }
 
-      .suggestion {
-        color: #bbb;
-        font-size: 0.9em;
-        margin-top: 4px;
-      }
+    .analysis-entry {
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 4px;
+      background: #333;
+      border-left: 4px solid #ccc;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
 
-      .score {
-        float: right;
-        font-family: monospace;
-        color: #ccc;
-      }
+    .good {
+      border-left-color: #4caf50;
+      background-color: #2e4732;
+    }
 
-      #playerInfoPanel {
-        display: none;
-      }
-    </style>
-  </head>
+    .mistake {
+      border-left-color: #ffc107;
+      background-color: #4e4a28;
+    }
 
-  <body>
-    <div class="navbar">
-      <h1>AdaptiveChess</h1>
-      <div class="navbar-buttons">
-        <button onclick="toggleProfile()">Profile</button>
-        <button class="logout-btn" onclick="logout()">Logout</button>
+    .blunder {
+      border-left-color: #f44336;
+      background-color: #5a2c2c;
+    }
+
+    .suggestion {
+      color: #bbb;
+      font-size: 0.9em;
+      margin-top: 4px;
+    }
+
+    .score {
+      float: right;
+      font-family: monospace;
+      color: #ccc;
+    }
+
+    #playerInfoPanel {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="navbar">
+    <h1>AdaptiveChess</h1>
+    <div class="navbar-buttons">
+      <button onclick="toggleProfile()">Profile</button>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="left-panel">
+      <div class="board-wrapper">
+        <div class="rank-labels">
+          <span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+        </div>
+
+        <div class="board-and-files">
+          <div id="myBoard"></div>
+          <div class="file-labels">
+            <span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-controls">
+        <div class="button-group">
+          <button id="startBtn">New Game</button>
+          <button id="undoBtn">Undo Move</button>
+          <button id="speakMoveBtn">🎙️ Speak Move</button>
+        </div>
       </div>
     </div>
 
-    <div class="container">
-      <div class="board-container">
-        <div id="myBoard" style="width: 100%"></div>
+    <div class="right-panel">
+      <div id="playerInfoPanel" class="side-panel">
+        <h2>Player Information</h2>
+        <p>Your Rating: <span id="playerRating">1200</span></p>
+        <p>Stockfish Level: <span id="stockfishLevel">0</span></p>
+        <p>Stockfish Depth: <span id="stockfishDepth">5</span></p>
+      </div>
 
-        <div class="game-controls">
+      <div class="side-panel">
+        <div class="game-status">
+          <h2>Game Status</h2>
+          <p class="status" id="status">Choose your color to start</p>
           <div class="button-group">
-            <button id="startBtn">New Game</button>
-            <button id="undoBtn">Undo Move</button>
-            <button id="speakMoveBtn">🎙️ Speak Move</button>
+            <button id="playAsWhite">White</button>
+            <button id="playAsBlack">Black</button>
           </div>
-        </div>
-      </div>
 
-      <div class="right-panel">
-        <div id="playerInfoPanel" class="side-panel">
-          <h2>Player Information</h2>
-          <p>Your Rating: <span id="playerRating">1200</span></p>
-          <p>Stockfish Level: <span id="stockfishLevel">0</span></p>
-          <p>Stockfish Depth: <span id="stockfishDepth">5</span></p>
-        </div>
+          <h2>Move History</h2>
+          <div id="move-list"></div>
 
-        <div class="side-panel">
-          <div class="game-status">
-            <h2>Game Status</h2>
-            <p class="status" id="status">Choose your color to start</p>
-            <div class="button-group">
-              <button id="playAsWhite">White</button>
-              <button id="playAsBlack">Black</button>
-            </div>
-
-            <h2>Move History</h2>
-            <div id="move-list"></div>
-
-            <div class="analysis-controls">
-              <button id="analyzeBtn" style="display: none">
-                Generate Analysis
-              </button>
-              <div id="analysisResult" class="analysis-output">
-                <!-- Dynamic move analysis -->
-              </div>
-            </div>
+          <div class="analysis-controls">
+            <button id="analyzeBtn" style="display: none">Generate Analysis</button>
+            <div id="analysisResult" class="analysis-output"></div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <script>
-      function logout() {
-        fetch("http://localhost:8080/logout", {
-          method: "POST",
-          credentials: "include",
-        }).then(() => {
-          window.location.href = "login.html";
-        });
-      }
+  <script>
+    function logout() {
+      fetch("http://localhost:8080/logout", {
+        method: "POST",
+        credentials: "include",
+      }).then(() => {
+        window.location.href = "login.html";
+      });
+    }
 
-      function toggleProfile() {
-        const panel = document.getElementById("playerInfoPanel");
-        panel.style.display =
-          panel.style.display === "none" || panel.style.display === ""
-            ? "block"
-            : "none";
-      }
-    </script>
+    function toggleProfile() {
+      const panel = document.getElementById("playerInfoPanel");
+      panel.style.display = (panel.style.display === "none" || panel.style.display === "") ? "block" : "none";
+    }
+  </script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-    <script src="chessboardjs-themes.js"></script>
-    <script type="module" src="main.js"></script>
-  </body>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+  <script src="chessboardjs-themes.js"></script>
+  <script type="module" src="main.js"></script>
+</body>
+
 </html>

@@ -14,18 +14,20 @@ import { makeRLMove } from './rl_agent.js'; // ✅ RL agent support
 import { updateUI, updateStatus } from './ui.js';
 
 export function initializeBoard() {
-    const config = {
-        draggable: true,
-        position: 'start',
-        pieceTheme: typeof wikipedia_piece_theme !== 'undefined' ? wikipedia_piece_theme : undefined,
-        onDragStart,
-        onDrop,
-        onMoveEnd,
-        onSnapEnd
-    };
-    const board = Chessboard('myBoard', config);
-    setBoard(board);
-    $(window).resize(board.resize);
+  const config = {
+    draggable: true,
+    position: 'start',
+    pieceTheme: typeof wikipedia_piece_theme !== 'undefined' ? wikipedia_piece_theme : undefined,
+    showNotation: false, 
+    onDragStart,
+    onDrop,
+    onMoveEnd,
+    onSnapEnd
+  };
+
+  const board = Chessboard('myBoard', config);
+  setBoard(board);
+  $(window).resize(board.resize);
 }
 
 function onDragStart(source, piece) {

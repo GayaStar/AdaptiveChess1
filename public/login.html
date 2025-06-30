@@ -1,177 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Login - Chess App</title>
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
 
-      html, body {
-        height: 100%;
-        font-family: Arial, sans-serif;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Chess App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-      body {
-        position: relative;
-        background: #000;
-        color: white;
-      }
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
 
-      body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        background: url('chess-piece.jpg') no-repeat center center;
-        background-size: cover;
-        filter: blur(8px) brightness(0.6);
-        z-index: -1;
-      }
+    body {
+      background: url('login-bgg.jpg') no-repeat center center;
+      background-size: cover;
+      color: white;
+    }
 
-      .login-wrapper {
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
 
-      .login-box {
-        width: 100%;
-        max-width: 450px;
-        padding: 50px;
-        background: rgba(0, 0, 0, 0.7);
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-        text-align: center;
-      }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: url('chess-piece.jpg') no-repeat center center;
+      background-size: cover;
+      filter: blur(8px) brightness(0.6);
+      z-index: -1;
+    }
 
-      .login-box h2 {
-        margin-bottom: 25px;
-        font-size: 1.8rem;
-      }
+    .login-wrapper {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-      input {
-        width: 100%;
-        margin: 12px 0;
-        padding: 12px;
-        font-size: 1rem;
-        border: 1px solid #555;
-        border-radius: 4px;
-        background-color: rgba(255, 255, 255, 0.1);
-        color: white;
-        outline: none;
-      }
+    .login-box {
+      width: 100%;
+      max-width: 450px;
+      padding: 50px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+      text-align: center;
+    }
 
-      input:focus {
-        border-color: #1976d2;
-      }
+    .login-box h2 {
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+    }
 
-      input::placeholder {
-        color: #ccc;
-      }
+    input {
+      width: 100%;
+      margin: 12px 0;
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid #555;
+      border-radius: 4px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      outline: none;
+    }
 
-      input:-webkit-autofill {
-        -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
-        -webkit-text-fill-color: white !important;
-        transition: background-color 5000s ease-in-out 0s;
-      }
+    input:focus {
+      border-color: #1976d2;
+    }
 
-      input:-moz-autofill {
-        box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
-        -moz-text-fill-color: white !important;
-      }
+    input::placeholder {
+      color: #ccc;
+    }
 
-      button {
-        width: 100%;
-        padding: 12px;
-        font-weight: bold;
-        background: #1976d2;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        margin-top: 12px;
-        font-size: 1rem;
-      }
+    input:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
+      -webkit-text-fill-color: white !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
 
-      button:hover {
-        background: #125ba1;
-      }
+    input:-moz-autofill {
+      box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
+      -moz-text-fill-color: white !important;
+    }
 
-      #login-status {
-        margin-top: 12px;
-        color: #ff5555;
-      }
+    button {
+      width: 100%;
+      padding: 12px;
+      font-weight: bold;
+      background: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 12px;
+      font-size: 1rem;
+    }
 
-      p {
-        text-align: center;
-        margin-top: 14px;
-        color: #ccc;
-      }
+    button:hover {
+      background: #125ba1;
+    }
 
-      a {
-        color: #4dabf7;
-        text-decoration: none;
-      }
+    #login-status {
+      margin-top: 12px;
+      color: #ff5555;
+    }
 
-      a:hover {
-        text-decoration: underline;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Login form section -->
-    <div class="login-wrapper" id="login-section">
-      <div class="login-box">
-        <h2>Login</h2>
-        <input id="login-username" placeholder="Username" />
-        <input id="login-password" placeholder="Password" type="password" />
-        <button onclick="login()">Login</button>
-        <div id="login-status"></div>
-        <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
-      </div>
+    p {
+      text-align: center;
+      margin-top: 14px;
+      color: #ccc;
+    }
+
+    a {
+      color: #4dabf7;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Login form section -->
+  <div class="login-wrapper" id="login-section">
+    <div class="login-box">
+      <h2>Login</h2>
+      <input id="login-username" placeholder="Username" />
+      <input id="login-password" placeholder="Password" type="password" />
+      <button onclick="login()">Login</button>
+      <div id="login-status"></div>
+      <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
     </div>
+  </div>
 
-    <!-- Post-login option section -->
-    <div class="login-wrapper" id="post-login-options" style="display: none;">
-      <div class="login-box">
-        <h2>Welcome!</h2>
-        <p>What would you like to do?</p>
-        <button onclick="window.location.href='index.html'">Play Chess</button>
-        <button onclick="window.location.href='learn.html'">Learn Chess</button>
-      </div>
+  <!-- Post-login option section -->
+  <div class="login-wrapper" id="post-login-options" style="display: none;">
+    <div class="login-box">
+      <h2>Welcome!</h2>
+      <p>What would you like to do?</p>
+      <button onclick="window.location.href='index.html'">Play Chess</button>
+      <button onclick="window.location.href='learn.html'">Learn Chess</button>
     </div>
+  </div>
 
-    <script>
-      function login() {
-        const username = document.getElementById("login-username").value;
-        const password = document.getElementById("login-password").value;
+  <script>
+    function login() {
+      const username = document.getElementById("login-username").value;
+      const password = document.getElementById("login-password").value;
 
-        fetch("/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ username, password }),
+      fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username, password }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.msg === "Login successful") {
+            document.getElementById("login-section").style.display = "none";
+            document.getElementById("post-login-options").style.display = "flex";
+          } else {
+            document.getElementById("login-status").innerText = data.msg;
+          }
         })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.msg === "Login successful") {
-              document.getElementById("login-section").style.display = "none";
-              document.getElementById("post-login-options").style.display = "flex";
-            } else {
-              document.getElementById("login-status").innerText = data.msg;
-            }
-          })
-          .catch(() => {
-            document.getElementById("login-status").innerText = "Error logging in";
-          });
-      }
-    </script>
-  </body>
+        .catch(() => {
+          document.getElementById("login-status").innerText = "Error logging in";
+        });
+    }
+  </script>
+</body>
+
 </html>
