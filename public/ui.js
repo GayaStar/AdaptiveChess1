@@ -10,10 +10,7 @@ import {
   hasGameEnded,
   setGameEnded,
   isGameSaved,
-  setGameSaved,
-  getApiUrl,
-  getStockfishRandomness,
-  setStockfishRandomness
+  setGameSaved
 } from './state.js';
 
 import { updateStockfishLevel } from './stockfish.js';
@@ -96,13 +93,10 @@ function updateRatings(result) {
   }
 
   updatedRating = Math.max(100, updatedRating);
-   // 🆕 Dynamically compute randomness: 3 (easiest) → 0 (hardest)
-  const randomness = Math.max(0, 3 - Math.floor(updatedRating / 1000));
 
   setPlayerRating(updatedRating);
   setStockfishLevel(level);
   setStockfishDepth(depth);
-  setStockfishRandomness(randomness); // you should implement this setter if not present
 
   fetch('/update_rating', {
     method: 'POST',
@@ -115,7 +109,7 @@ function updateRatings(result) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ stockfishLevel: level, stockfishDepth: depth,randomness })
+    body: JSON.stringify({ stockfishLevel: level, stockfishDepth: depth})
   });
 
   $('#playerRating').text(updatedRating);
