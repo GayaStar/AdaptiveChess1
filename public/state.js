@@ -52,3 +52,13 @@ export function setUserId(id) {
 export function getUserId() {
   return userId;
 }
+
+let stockfishRandomness = 2;
+
+export function getStockfishRandomness() {
+  return stockfishRandomness;
+}
+
+export function setStockfishRandomness(r) {
+  stockfishRandomness = Math.max(0, Math.min(3, r));
+}

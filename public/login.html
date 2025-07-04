@@ -19,25 +19,19 @@
       font-family: Arial, sans-serif;
     }
 
-    body {
-      background: url('login-bgg.jpg') no-repeat center center;
-      background-size: cover;
-      color: white;
-    }
 
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: url('login-bgg.jpg') no-repeat center center;
+  background-size: cover;
+  z-index: -1;
+}
 
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      background: url('chess-piece.jpg') no-repeat center center;
-      background-size: cover;
-      filter: blur(8px) brightness(0.6);
-      z-index: -1;
-    }
 
     .login-wrapper {
       height: 100vh;
@@ -51,6 +45,7 @@
       max-width: 450px;
       padding: 50px;
       background: rgba(0, 0, 0, 0.7);
+      color: #dbd1d1;
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
       text-align: center;
