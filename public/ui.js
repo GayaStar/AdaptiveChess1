@@ -11,7 +11,7 @@ import {
   setGameEnded,
   isGameSaved,
   setGameSaved,
-  getApiUrl,
+  getApiUrl
 } from './state.js';
 
 import { updateStockfishLevel } from './stockfish.js';
@@ -72,11 +72,11 @@ export function updateStatus() {
 
 function updateRatings(result) {
   const playerRating = getPlayerRating();
-  const stockfishRating = 1200 + getStockfishLevel() * 100;
+  const stockfishRating = 1000 + getStockfishLevel() * 100;
   let updatedRating = playerRating;
   let level = getStockfishLevel();
   let depth = getStockfishDepth();
-  
+
   const expected = 1 / (1 + Math.pow(10, (stockfishRating - playerRating) / 400));
 
   if (typeof result === 'boolean') {
@@ -94,7 +94,7 @@ function updateRatings(result) {
   }
 
   updatedRating = Math.max(100, updatedRating);
- 
+
   setPlayerRating(updatedRating);
   setStockfishLevel(level);
   setStockfishDepth(depth);
@@ -151,7 +151,7 @@ export function updateRatingRL() {
 
   let current = getPlayerRating();
   let newRating = current + (userWon ? 25 : -15);
-  newRating = Math.max(1200, Math.min(newRating, 1200));
+  newRating = Math.max(1000, Math.min(newRating, 1200));
 
   setPlayerRating(newRating);
   $('#playerRating').text(newRating);

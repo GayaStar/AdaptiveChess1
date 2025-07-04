@@ -1,4 +1,13 @@
 {
+  "name": "adaptivechess",
+  "version": "1.0.0",
+  "description": "this is a reinforcement+stockfish chess website (under progress)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "connect-mongo": "^5.1.0",
@@ -12,14 +21,5 @@
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11"
-  },
-  "scripts": {
-    "start": "node server.js"
-  },
-  "name": "adaptivechess",
-  "description": "this is a reinforcement+stockfish chess website (under progress)",
-  "version": "1.0.0",
-  "main": "server.js",
-  "author": "",
-  "license": "ISC"
+  }
 }
