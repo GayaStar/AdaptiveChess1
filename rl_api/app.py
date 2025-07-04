@@ -1,9 +1,12 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, render_template_string
+
 import chess
 from chess_rl_agent import RLChessAgent
 from flask_cors import CORS
 import requests
 import os
+from hybrid_agent import HybridChessAgent
+
 
 app = Flask(__name__)
 app.secret_key = 'super-secret-key-change-me'
@@ -49,38 +52,32 @@ def login():
     session['user_id'] = user_id
     return jsonify({'message': 'Logged in', 'user_id': user_id})
 
+# Initialize the hybrid agent once
+agent = HybridChessAgent(model_path="model/chess_rl_model_final1.pth", stockfish_path="D:/Adaptive_Chess/stockfish/stockfish-windows-x86-64-avx2.exe")
+
 @app.route("/rl-move", methods=["POST"])
 def rl_move():
-    if request.method == "OPTIONS":
-        return '', 204
-
-    data = request.json
+    data = request.get_json()
     fen = data.get("fen")
     user_id = data.get("user_id")
 
-    if not fen or not user_id:
-        return jsonify({"error": "Missing fen or user_id"}), 400
+    # TODO: Look up the user’s ELO from a database. For now, assume 800.
+    elo = data.get("elo")
+    agent.set_user_elo(elo)
 
     try:
-        agent = get_agent(user_id)
         board = chess.Board(fen)
-        print("[/rl-move] FEN received:", fen)
-
         move = agent.select_move(board)
-        print("[RL MOVE] Returning:", move.uci())
-
-        return jsonify({
+        response = {
             "move": {
-                "from": move.uci()[:2],
-                "to": move.uci()[2:],
-                "promotion": move.uci()[4:] if len(move.uci()) == 5 else None
-            },
-            "temperature": agent.temperature
-        })
-
+                "from": chess.square_name(move.from_square),
+                "to": chess.square_name(move.to_square),
+                "promotion": move.promotion and chess.piece_symbol(move.promotion)
+            }
+        }
+        return jsonify(response)
     except Exception as e:
-        print(f"[ERROR /rl-move] {e}")
-        return jsonify({"error": str(e)}), 500
+        return f"Failed to select move: {str(e)}", 500
 
 @app.route("/update-elo", methods=["POST"])
 def update_elo():
@@ -100,11 +97,18 @@ def update_elo():
                 "userId": user_id,
                 "temperature": agent.temperature
             })
-            if response.status_code != 200:
-                print("[WARNING] Failed to persist temperature to Node server")
-
+            
         except Exception as err:
-            print(f"[ERROR] While syncing to Node: {err}")
+            error_message = f"[ERROR] While syncing to Node: {err}"
+        return render_template_string("""
+            <html>
+            <body>
+                <h1>Application Page</h1>
+                <p style="color:red;">{{ error }}</p>
+            </body>
+            </html>
+        """, error=error_message)
+
 
         return jsonify({"status": "updated", "temperature": agent.temperature})
 

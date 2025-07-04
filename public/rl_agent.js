@@ -1,4 +1,5 @@
-    import { getGame, getBoard, getPlayerColor, getPlayerRating, setGameEnded, getUserId } from './state.js';
+   
+   import { getGame, getBoard, getPlayerColor, getPlayerRating, setGameEnded, getUserId } from './state.js';
     import { highlightLastMove } from './board.js';
     import { updateUI, updateStatus, updateRatingRL } from './ui.js';
     import { convertUciToSan } from './utils.js';
@@ -9,13 +10,13 @@
         const board = getBoard();
         const fen = game.fen();
         const userId = getUserId();
-
+        const elo=getPlayerRating();
         try {
             const res = await fetch('http://localhost:5001/rl-move', {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fen, user_id: userId })
+                body: JSON.stringify({ fen, user_id: userId,elo:elo })
             });
 
             if (!res.ok) {

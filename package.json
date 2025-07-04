@@ -7,5 +7,19 @@
     "express-session": "^1.18.1",
     "mongodb": "^6.16.0",
     "stockfish": "^16.0.0"
-  }
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "adaptivechess",
+  "description": "this is a reinforcement+stockfish chess website (under progress)",
+  "version": "1.0.0",
+  "main": "server.js",
+  "author": "",
+  "license": "ISC"
 }
