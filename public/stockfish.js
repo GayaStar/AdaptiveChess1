@@ -150,3 +150,7 @@ function onStockfishMessage(message) {
         }
     }
 }
+
+
+
+

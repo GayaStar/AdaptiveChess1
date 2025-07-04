@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Home - Chess App</title>
+    <link rel="stylesheet" href="homePage.css" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Welcome to Adaptive Chess</h1>
+            <p>Choose what you'd like to do:</p>
+            <div class="btn-group">
+                <button onclick="goToPlay()">Play Chess</button>
+                <button onclick="goToLearn()">Learn Chess</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goToPlay() {
+            window.location.href = 'index.html';
+        }
+
+        function goToLearn() {
+            window.location.href = 'learn.html';
+        }
+    </script>
+</body>
+
+</html>
