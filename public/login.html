@@ -1,135 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <title>Login - Chess App</title>
+  <title>Login - Adaptive Chess</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" href="https://img.icons8.com/ios-filled/50/ffffff/chessboard.png">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --accent: linear-gradient(90deg,#1976d2 10%,#00bcd4 90%);
+      --dark-bg: #191928;
+      --card-bg: rgba(24,27,44,0.93);
+      --input-bg: rgba(255,255,255,0.07);
+      --input-border: #1976d2;
+      --button-hover: #125ba1;
     }
-
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Segoe UI',Arial,sans-serif;
+      background: var(--dark-bg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
     body {
-      height: 100vh;
-      background: linear-gradient(135deg, #1e1e2f, #3a3a57);
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: 'Segoe UI', sans-serif;
     }
-
     .login-container {
-      animation: fadeIn 1s ease-in-out;
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 75% 10%, #1976d2 7%, transparent 20%), 
+                  radial-gradient(circle at 5% 80%, #00bcd4 6%, transparent 20%);
     }
-
     .login-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 50px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 42px 32px 32px 32px;
+      box-shadow: 0 6px 28px 6px rgba(0,0,0,0.45);
+      width: 100%;
+      max-width: 375px;
       text-align: center;
-      color: white;
-      width: 100%;
-      max-width: 400px;
+      color: #fff;
+      animation: fadeIn 1s cubic-bezier(.47,1.64,.41,.8);
+      position: relative;
     }
-
+    .login-logo {
+      width: 52px;
+      margin-bottom: 18px;
+      filter: drop-shadow(0 2px 8px rgba(25,118,210,0.4));
+      animation: bounce 1.2s 1;
+    }
     .login-card h2 {
-      font-size: 1.8rem;
-      margin-bottom: 25px;
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      background: var(--accent);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 22px;
     }
-
-    input {
+    .login-form label {
+      display:block;
+      text-align:left;
+      font-size: 0.99rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      color: #b8e2fc;
+      margin: 10px 0 3px 4px;
+    }
+    .login-form input {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
+      padding: 12px 14px;
       border-radius: 8px;
-      border: none;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
+      border: 1.5px solid transparent;
+      background: var(--input-bg);
+      color: #fff;
       font-size: 1rem;
+      margin-bottom: 10px;
+      transition: border 0.2s, box-shadow 0.2s;
     }
-
-    input::placeholder {
-      color: #ccc;
+    .login-form input:focus {
+      border: 1.5px solid var(--input-border);
+      outline: none;
+      background: rgba(255,255,255,0.15);
+      box-shadow: 0 0 0 2px #1976d2aa;
     }
-
-    input:focus {
-      outline: 2px solid #1976d2;
+    .login-form input::placeholder {
+      color: #b0b0cc;
+      font-size: 0.98em;
     }
-
-    button {
+    .login-btn {
       width: 100%;
-      padding: 12px;
-      margin-top: 10px;
+      padding: 12px 0;
+      margin-top: 13px;
       font-weight: bold;
-      font-size: 1rem;
+      font-size: 1.08rem;
       border: none;
       border-radius: 8px;
-      background: #1976d2;
-      color: white;
+      background: var(--accent);
+      color: #fff;
       cursor: pointer;
-      transition: background 0.3s ease;
+      box-shadow: 0 2px 12px 0 rgba(25,118,210,0.12);
+      transition: filter 0.2s, transform 0.15s;
+      letter-spacing: 0.04em;
     }
-
-    button:hover {
-      background: #125ba1;
+    .login-btn:hover, .login-btn:focus {
+      filter: brightness(1.15);
+      transform: translateY(-2px) scale(1.03);
     }
-
     #login-status {
       margin-top: 10px;
-      color: #ff6666;
+      color: #ff7e82;
       font-size: 0.95rem;
+      min-height: 22px;
     }
-
-    p {
-      margin-top: 16px;
-      font-size: 0.9rem;
-      color: #ccc;
+    .login-bottom-link {
+      margin-top: 22px;
+      font-size: 0.97rem;
+      color: #b0b8d0;
     }
-
-    a {
-      color: #4dabf7;
+    .login-bottom-link a {
+      color: #00bcd4;
       text-decoration: none;
+      font-weight: 600;
+      transition: color 0.17s;
     }
-
-    a:hover {
+    .login-bottom-link a:hover {
+      color: #1976d2;
       text-decoration: underline;
     }
-
+    @media (max-width: 450px) {
+      .login-card { padding: 28px 6vw 24px 6vw; }
+    }
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+      from { opacity: 0; transform: scale(0.96) translateY(32px);}
+      to { opacity: 1; transform: none;}
+    }
+    @keyframes bounce {
+      0% { transform: translateY(-10px);}
+      25% { transform: translateY(0);}
+      50% { transform: translateY(-6px);}
+      75% { transform: translateY(0);}
+      100% { transform: translateY(-1px);}
     }
   </style>
 </head>
-
 <body>
   <div class="login-container">
-    <div class="login-card">
+    <form class="login-card login-form" onsubmit="event.preventDefault();login();">
+      <img src="https://img.icons8.com/ios-filled/100/1976d2/chessboard.png" alt="Chess Logo" class="login-logo" draggable="false"/>
       <h2>Login to Adaptive Chess</h2>
-      <input id="login-username" type="text" placeholder="Username" />
-      <input id="login-password" type="password" placeholder="Password" />
-      <button onclick="login()">Login</button>
-      <div id="login-status"></div>
-      <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
-    </div>
-  </div>
+      <label for="login-username">Username</label>
+      <input id="login-username" type="text" placeholder="Enter your username" autocomplete="username" required />
 
+      <label for="login-password">Password</label>
+      <input id="login-password" type="password" placeholder="Enter your password" autocomplete="current-password" required />
+
+      <button type="submit" class="login-btn">Login</button>
+      <div id="login-status"></div>
+      <div class="login-bottom-link">
+        Don't have an account?
+        <a href="signup.html">Sign up here</a>
+      </div>
+    </form>
+  </div>
   <script>
     function login() {
       const username = document.getElementById("login-username").value;
       const password = document.getElementById("login-password").value;
-
+      document.getElementById("login-status").innerText = "";
       fetch("/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -150,5 +195,4 @@
     }
   </script>
 </body>
-
 </html>

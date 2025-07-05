@@ -2,145 +2,176 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sign Up - Chess App</title>
+  <title>Sign Up - Adaptive Chess</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" href="https://img.icons8.com/ios-filled/50/ffffff/chessboard.png">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    :root {
+      --accent: linear-gradient(90deg,#1976d2 10%,#00bcd4 90%);
+      --dark-bg: #191928;
+      --card-bg: rgba(24,27,44,0.93);
+      --input-bg: rgba(255,255,255,0.07);
+      --input-border: #1976d2;
+      --button-hover: #125ba1;
     }
-
     html, body {
       height: 100%;
-      font-family: Arial, sans-serif;
+      margin: 0;
+      font-family: 'Segoe UI',Arial,sans-serif;
+      background: var(--dark-bg);
+      min-height: 100vh;
+      overflow-x: hidden;
     }
-
     body {
-      position: relative;
-      background: #000;
-      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      background: url('chess-piece.jpg') no-repeat center center;
-      background-size: cover;
-      filter: blur(8px) brightness(0.6);
-      z-index: -1;
-    }
-
-    .signup-wrapper {
-      height: 100vh;
+    .signup-container {
+      width: 100vw;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: radial-gradient(circle at 80% 90%, #00bcd4 8%, transparent 20%), 
+                  radial-gradient(circle at 15% 10%, #1976d2 8%, transparent 20%);
     }
-
-    .signup-box {
+    .signup-card {
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 42px 32px 32px 32px;
+      box-shadow: 0 6px 28px 6px rgba(0,0,0,0.45);
       width: 100%;
-      max-width: 450px;
-      padding: 50px;
-      background: rgba(0, 0, 0, 0.7);
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-    }
-
-    .signup-box h2 {
-      margin-bottom: 25px;
+      max-width: 375px;
       text-align: center;
-      color: white;
-      font-size: 1.8rem;
+      color: #fff;
+      animation: fadeIn 1s cubic-bezier(.47,1.64,.41,.8);
+      position: relative;
     }
-
-    input {
+    .signup-logo {
+      width: 50px;
+      margin-bottom: 17px;
+      filter: drop-shadow(0 2px 8px rgba(0,188,212,0.6));
+      animation: bounce 1.2s 1;
+    }
+    .signup-card h2 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      background: var(--accent);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 22px;
+    }
+    .signup-form label {
+      display:block;
+      text-align:left;
+      font-size: 0.99rem;
+      font-weight: 500;
+      color: #b8e2fc;
+      margin: 10px 0 3px 4px;
+    }
+    .signup-form input {
       width: 100%;
-      margin: 12px 0;
-      padding: 12px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1.5px solid transparent;
+      background: var(--input-bg);
+      color: #fff;
       font-size: 1rem;
-      border: 1px solid #555;
-      border-radius: 4px;
-      background-color: rgba(255, 255, 255, 0.1);
-      color: white;
+      margin-bottom: 10px;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+    .signup-form input:focus {
+      border: 1.5px solid var(--input-border);
       outline: none;
+      background: rgba(255,255,255,0.15);
+      box-shadow: 0 0 0 2px #1976d2aa;
     }
-
-    input:focus {
-      background-color: rgba(255, 255, 255, 0.1);
-      border-color: #1976d2;
+    .signup-form input::placeholder {
+      color: #b0b0cc;
+      font-size: 0.98em;
     }
-
-    input::placeholder {
-      color: #ccc;
-    }
-
-    input:-webkit-autofill {
-      -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
-      -webkit-text-fill-color: white !important;
-      transition: background-color 5000s ease-in-out 0s;
-    }
-
-    input:-moz-autofill {
-      box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
-      -moz-text-fill-color: white !important;
-    }
-
-    button {
+    .signup-btn {
       width: 100%;
-      padding: 12px;
+      padding: 12px 0;
+      margin-top: 13px;
       font-weight: bold;
-      background: #1976d2;
-      color: white;
+      font-size: 1.08rem;
       border: none;
-      border-radius: 4px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
       cursor: pointer;
-      margin-top: 12px;
-      font-size: 1rem;
+      box-shadow: 0 2px 12px 0 rgba(0,188,212,0.12);
+      transition: filter 0.2s, transform 0.15s;
+      letter-spacing: 0.04em;
     }
-
+    .signup-btn:hover, .signup-btn:focus {
+      filter: brightness(1.17);
+      transform: translateY(-2px) scale(1.03);
+    }
     #signup-status {
-      margin-top: 12px;
-      color: #ff5555;
-      text-align: center;
+      margin-top: 10px;
+      color: #ff7e82;
+      font-size: 0.95rem;
+      min-height: 22px;
     }
-
-    p {
-      text-align: center;
-      margin-top: 14px;
-      color: #ccc;
+    .signup-bottom-link {
+      margin-top: 22px;
+      font-size: 0.97rem;
+      color: #b0b8d0;
     }
-
-    a {
-      color: #4dabf7;
+    .signup-bottom-link a {
+      color: #00bcd4;
       text-decoration: none;
+      font-weight: 600;
+      transition: color 0.17s;
     }
-
-    a:hover {
+    .signup-bottom-link a:hover {
+      color: #1976d2;
       text-decoration: underline;
+    }
+    @media (max-width: 450px) {
+      .signup-card { padding: 28px 6vw 24px 6vw; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.96) translateY(32px);}
+      to { opacity: 1; transform: none;}
+    }
+    @keyframes bounce {
+      0% { transform: translateY(-10px);}
+      25% { transform: translateY(0);}
+      50% { transform: translateY(-6px);}
+      75% { transform: translateY(0);}
+      100% { transform: translateY(-1px);}
     }
   </style>
 </head>
 <body>
-  <div class="signup-wrapper">
-    <div class="signup-box">
-      <h2>Sign Up</h2>
-      <input id="signup-username" placeholder="Username">
-      <input id="signup-password" placeholder="Password" type="password">
-      <button onclick="signup()">Sign Up</button>
+  <div class="signup-container">
+    <form class="signup-card signup-form" onsubmit="event.preventDefault();signup();">
+      <img src="https://img.icons8.com/ios-filled/100/00bcd4/chessboard.png" alt="Chess Logo" class="signup-logo" draggable="false"/>
+      <h2>Create your Chess Account</h2>
+      <label for="signup-username">Username</label>
+      <input id="signup-username" placeholder="Choose a username" autocomplete="username" required />
+      <label for="signup-password">Password</label>
+      <input id="signup-password" placeholder="Choose a password" type="password" autocomplete="new-password" required />
+      <button type="submit" class="signup-btn">Sign Up</button>
       <div id="signup-status"></div>
-      <p>Already have an account? <a href="login.html">Login here</a></p>
-    </div>
+      <div class="signup-bottom-link">
+        Already have an account?
+        <a href="login.html">Login here</a>
+      </div>
+    </form>
   </div>
-
   <script>
     function signup() {
       const username = document.getElementById('signup-username').value;
       const password = document.getElementById('signup-password').value;
-
+      document.getElementById('signup-status').innerText = "";
       fetch('/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
