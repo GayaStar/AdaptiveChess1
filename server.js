@@ -177,6 +177,36 @@ app.post('/logout', (req, res) => {
   });
 });
 
+// Add after other endpoints
+app.get('/user_games', requireAuth, async (req, res) => {
+  try {
+    const gamesCollection = db.collection('games');
+    const games = await gamesCollection.find({ username: req.session.username })
+      .sort({ timestamp: 1 }) // chronological for rating progress
+      .toArray();
+
+    const total = games.length;
+    const ratings = games.map(g => g.rating);
+    const timestamps = games.map(g => g.timestamp);
+    // Last 2 games, most recent first
+    const latest = [...games].sort((a, b) => b.timestamp - a.timestamp).slice(0, 2);
+
+    res.json({
+      total,
+      ratings,
+      timestamps,
+      latest: latest.map(g => ({
+        moves: g.moves,
+        result: g.result,
+        rating: g.rating,
+        timestamp: g.timestamp
+      }))
+    });
+  } catch (err) {
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
 // Server setup
 const server = http.createServer(app);
 server.listen(PORT, () => {

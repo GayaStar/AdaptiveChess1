@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Profile - Adaptive Chess</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" href="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png">
+  <link rel="stylesheet" href="profile.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+      <a href="homePage.html" class="brand">
+          <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" alt="Chess Logo"/>
+          <span>Adaptive Chess</span>
+      </a>
+      <div class="navbar-menu" id="navbar-menu"></div>
+  </nav>
+  <main>
+    <section class="profile-header">
+      <div class="profile-info">
+        <div class="avatar" id="avatar"></div>
+        <div>
+          <h2 id="username">Player</h2>
+          <div>Rating: <span id="rating">-</span></div>
+          <div>Games Played: <span id="games-played">-</span></div>
+        </div>
+      </div>
+      <div class="profile-graph">
+        <canvas id="ratingChart" width="420" height="210"></canvas>
+      </div>
+    </section>
+    <section class="recent-games">
+      <h3>Last 2 Games</h3>
+      <div id="games-list"></div>
+    </section>
+  </main>
+  <script>
+    // Navbar logic (reuse your navbar JS)
+    function renderNavbar() {
+      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      const username = localStorage.getItem("username") || "";
+      const nav = document.getElementById('navbar-menu');
+      nav.innerHTML = "";
+      if (!isLoggedIn) {
+        nav.innerHTML = `
+            <a class="nav-link" href="login.html">Login</a>
+            <a class="nav-link" href="signup.html">Sign Up</a>
+        `;
+      } else {
+        nav.innerHTML = `
+            <a class="nav-link" href="index.html">Play Chess</a>
+            <a class="nav-link" href="learn.html">Learn Chess</a>
+            <a class="nav-link" href="profile.html">
+                <span class="profile-avatar">${username.charAt(0).toUpperCase()}</span> ${username || "Profile"}
+            </a>
+            <button class="nav-btn" onclick="logout()">Logout</button>
+        `;
+      }
+    }
+    function logout() {
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("username");
+      location.reload();
+    }
+    renderNavbar();
+
+    // Fetch profile data from server
+    async function fetchProfile() {
+      try {
+        const [userRes, gamesRes] = await Promise.all([
+          fetch('/user', { credentials: 'include' }),
+          fetch('/user_games', { credentials: 'include' })
+        ]);
+        const userData = await userRes.json();
+        const gamesData = await gamesRes.json();
+
+        // Display user info
+        document.getElementById('username').textContent = userData.username;
+        document.getElementById('avatar').textContent = userData.username.charAt(0).toUpperCase();
+        document.getElementById('rating').textContent = userData.rating;
+        document.getElementById('games-played').textContent = gamesData.total || 0;
+
+        // Show chart
+        const ratingHistory = gamesData.ratings || [];
+        const timestamps = gamesData.timestamps || [];
+        const ctx = document.getElementById('ratingChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: timestamps.map(t => new Date(t).toLocaleDateString()),
+            datasets: [{
+              label: 'Rating',
+              data: ratingHistory,
+              borderColor: '#9f88ff',
+              backgroundColor: 'rgba(159,136,255,0.15)',
+              tension: 0.2,
+              pointBackgroundColor: "#5eead4",
+              pointRadius: 5
+            }]
+          },
+          options: {
+            scales: {
+              x: { title: { display: false } },
+              y: { title: { display: false }, beginAtZero: false }
+            },
+            plugins: {
+              legend: { display: false }
+            },
+            responsive: true
+          }
+        });
+
+        // Last 2 games
+        const gamesList = document.getElementById('games-list');
+        gamesList.innerHTML = '';
+        if (gamesData.latest && gamesData.latest.length) {
+          gamesData.latest.forEach((game, idx) => {
+            const el = document.createElement('div');
+            el.className = 'game-block';
+            el.innerHTML = `
+              <div class="game-title">Game ${gamesData.latest.length - idx}: ${game.result} (${new Date(game.timestamp).toLocaleString()})</div>
+              <div class="move-list"><strong>Moves:</strong> ${game.moves.join(' ')}</div>
+              <div class="game-rating">Rating after game: <b>${game.rating}</b></div>
+            `;
+            gamesList.appendChild(el);
+          });
+        } else {
+          gamesList.innerHTML = '<em>No games played yet.</em>';
+        }
+      } catch (e) {
+        document.getElementById('username').textContent = "Error loading profile";
+      }
+    }
+    fetchProfile();
+  </script>
+</body>
+</html>
