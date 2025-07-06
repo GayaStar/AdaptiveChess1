@@ -1,106 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <title>Learn Chess - Adaptive Chess</title>
+  <title>Learn Chess - How Pieces Move | Adaptive Chess</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png">
   <link rel="stylesheet" href="homePage.css" />
   <style>
-    .board-container {
+    body {
+      min-height: 100vh;
+      background: var(--primary);
+    }
+
+    .learn-container {
+      max-width: 1000px;
+      margin: 2.5rem auto;
+      padding: 2rem 1.5rem;
+      background: var(--glass, rgba(36, 41, 68, 0.54));
+      border-radius: 22px;
+      box-shadow: 0 8px 36px 0 #0008, 0 1.5px 12px 0 #9f88ff44;
+      position: relative;
+    }
+
+    .chapter-nav {
+      display: flex;
+      gap: 1.4rem;
+      margin-bottom: 2.6rem;
+      justify-content: center;
+    }
+
+    .chapter-btn {
+      background: linear-gradient(90deg, #9f88ff 60%, #5eead4 100%);
+      color: #181e23;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.04rem;
+      font-weight: bold;
+      padding: 0.7em 1.5em;
+      cursor: pointer;
+      margin: 0 0.2em;
+      box-shadow: 0 2px 12px #5eead433;
+      outline: none;
+      transition: background 0.2s, color 0.2s;
+      opacity: 0.7;
+    }
+
+    .chapter-btn.active {
+      background: linear-gradient(90deg, #facc15 60%, #9f88ff 100%);
+      color: #181e23;
+      opacity: 1;
+      box-shadow: 0 2px 12px #facc1566;
+    }
+
+    .learn-title {
+      font-size: 2rem;
+      color: var(--violet);
+      font-family: Georgia, serif;
+      text-align: center;
+      margin-bottom: 0.7rem;
+      font-weight: bold;
+      letter-spacing: 0.01em;
+      text-shadow: 0 2px 12px #9f88ffaa;
+    }
+
+    .learn-desc {
+      text-align: center;
+      color: #e5e6ff;
+      font-size: 1.12rem;
+      margin-bottom: 2.1rem;
+    }
+
+    .board-section {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 2rem;
     }
 
-    #board, #speakBoard {
-      display: grid;
-      grid-template-columns: repeat(8, 60px);
-      grid-template-rows: repeat(8, 60px);
-      border-radius: 12px;
-      box-shadow: 0 0 40px #000a;
-      overflow: hidden;
-      margin-top: 1rem;
+    .piece-btns {
+      display: flex;
+      gap: 1.1rem;
+      margin-bottom: 1.6rem;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
-    .square {
-      width: 60px;
-      height: 60px;
-      line-height: 60px;
-      text-align: center;
-      font-size: 32px;
-      font-weight: bold;
+    .piece-btn {
+      background: #22223a;
+      color: #fff;
+      border: 2px solid #5eead4;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: background 0.18s, border 0.18s, box-shadow 0.18s;
+      box-shadow: 0 2px 8px #5eead455;
+      padding: 0;
+    }
+
+    .piece-btn img {
+      width: 70%;
+      height: 70%;
+      object-fit: contain;
+      pointer-events: none;
       user-select: none;
-      transition: all 0.3s ease;
+      display: block;
+      margin: auto;
+    }
+
+    .piece-btn.active,
+    .piece-btn:hover {
+      background: #5eead4;
+      color: #181e23;
+      border: 2.5px solid #9f88ff;
+      box-shadow: 0 2px 18px #facc1566;
+    }
+
+    .board-wrap {
+      margin-bottom: 1.4rem;
+    }
+
+    #learnBoard {
+      display: grid;
+      grid-template-columns: repeat(8, 48px);
+      grid-template-rows: repeat(8, 48px);
+      border-radius: 10px;
+      box-shadow: 0 2px 24px #0007;
+      overflow: hidden;
+      background: #22223a;
+    }
+
+    .chess-square {
+      width: 48px;
+      height: 48px;
+      line-height: 48px;
+      text-align: center;
+      font-size: 1.45rem;
+      font-weight: 700;
+      user-select: none;
+      transition: background 0.18s, box-shadow 0.2s, transform 0.14s;
+      padding: 0;
+    }
+
+    .chess-square img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+      display: block;
+      margin: auto;
+      pointer-events: none;
+      user-select: none;
     }
 
     .light {
-      background: linear-gradient(145deg, #e8e8e8, #cfcfcf);
+      background: #e5e6ff;
       color: #222;
     }
 
     .dark {
-      background: linear-gradient(145deg, #3a3a4d, #2a2a3c);
+      background: #3a3a4d;
       color: #eee;
     }
 
     .highlight {
       background: radial-gradient(circle, #facc15 0%, #facc1500 80%);
       box-shadow: inset 0 0 10px #facc15aa, 0 0 12px #facc15aa;
-      transform: scale(1.05);
+      transform: scale(1.08);
       z-index: 2;
+      border-radius: 6px;
     }
 
-    .controls {
-      margin: 1.5rem 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.7rem;
-      justify-content: center;
-    }
-
-    .controls button {
-      background: linear-gradient(120deg, #9f88ff, #5eead4);
-      border: none;
-      color: #181e23;
+    .piece-label {
       font-weight: bold;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 2px 8px #0005;
-      transition: transform 0.15s ease;
-    }
-
-    .controls button:hover {
-      transform: scale(1.05);
-    }
-
-    #notationBox, #speechBox {
-      margin-top: 1.4rem;
-      font-size: 1.1rem;
-      color: #e5e6ff;
-      background: var(--glass, rgba(36, 41, 68, 0.54));
-      border-radius: 10px;
-      padding: 1rem 1.5rem;
-      box-shadow: 0 2px 12px #0006;
+      font-size: 1.08rem;
+      margin-bottom: 0.6rem;
+      color: #facc15;
       text-align: center;
-      max-width: 600px;
+      letter-spacing: 0.01em;
     }
 
-    #speakSection {
-      margin-top: 3rem;
-      display: none;
-      flex-direction: column;
-      align-items: center;
+    @media (max-width: 700px) {
+      .learn-container {
+        padding: 0.7rem 0.2rem;
+      }
+
+      #learnBoard {
+        grid-template-columns: repeat(8, 36px);
+        grid-template-rows: repeat(8, 36px);
+      }
+
+      .board-section {
+        min-width: 0;
+      }
+
+      .chess-square {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+      }
+
+      .chess-square img {
+        width: 80%;
+        height: 80%;
+      }
+
+      .piece-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3rem;
+      }
+      .piece-btn img {
+        width: 70%;
+        height: 70%;
+      }
     }
   </style>
 </head>
 
 <body>
   <div class="bg-animated"></div>
-
-  <!-- Navbar -->
   <nav class="navbar">
     <a href="homePage.html" class="brand">
       <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" alt="Chess Logo" />
@@ -108,225 +230,178 @@
     </a>
     <div class="navbar-menu" id="navbar-menu"></div>
   </nav>
-
-  <main class="board-container">
-    <h1 style="color: #facc15; text-shadow: 0 2px 10px #9f88ffaa;">Learn How Each Piece Moves</h1>
-
-    <div class="controls">
-      <button onclick="highlightMoves('pawn')">Pawn</button>
-      <button onclick="highlightMoves('rook')">Rook</button>
-      <button onclick="highlightMoves('knight')">Knight</button>
-      <button onclick="highlightMoves('bishop')">Bishop</button>
-      <button onclick="highlightMoves('queen')">Queen</button>
-      <button onclick="highlightMoves('king')">King</button>
-      <button onclick="startSpeakMode()">🎙️ Learn How to Speak Move</button>
-    </div>
-
-    <div id="board"></div>
-    <div id="notationBox">Click a piece to learn how it moves!</div>
-
-    <!-- 👇 Speak move section -->
-    <div id="speakSection">
-      <h2 style="color: #9f88ff;">Speak a Move</h2>
-      <div id="speakBoard"></div>
-      <button onclick="listenForMove()">🎤 Start Listening</button>
-      <div id="speechBox">Say something like “Knight f3” or “Queen takes e5”</div>
+  <main>
+    <div class="learn-container">
+      <div class="chapter-nav">
+        <button class="chapter-btn active" disabled>1. How Pieces Move</button>
+        <button class="chapter-btn" onclick="window.location.href='learn_special.html'">2. Special Moves</button>
+        <button class="chapter-btn" onclick="window.location.href='learn_notation.html'">3. Notation</button>
+      </div>
+      <div class="learn-title">How Chess Pieces Move</div>
+      <div class="learn-desc">
+        Select a chess piece below to see how it moves on the board.<br>
+        The highlighted squares show where that piece can move from its current position.
+      </div>
+      <div class="board-section">
+        <div class="piece-btns">
+          <button class="piece-btn" id="pawnBtn" title="Pawn"><img src="pieces/wP.png" alt="Pawn"></button>
+          <button class="piece-btn" id="rookBtn" title="Rook"><img src="pieces/wR.png" alt="Rook"></button>
+          <button class="piece-btn" id="knightBtn" title="Knight"><img src="pieces/wN.png" alt="Knight"></button>
+          <button class="piece-btn" id="bishopBtn" title="Bishop"><img src="pieces/wB.png" alt="Bishop"></button>
+          <button class="piece-btn" id="queenBtn" title="Queen"><img src="pieces/wQ.png" alt="Queen"></button>
+          <button class="piece-btn" id="kingBtn" title="King"><img src="pieces/wK.png" alt="King"></button>
+        </div>
+        <div class="piece-label" id="pieceLabel"></div>
+        <div class="board-wrap">
+          <div id="learnBoard"></div>
+        </div>
+      </div>
     </div>
   </main>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
   <script>
-    const board = document.getElementById("board");
-    const speakBoard = document.getElementById("speakBoard");
-    const game = new Chess();
-
-    // Setup initial 8x8 board
-    function createBoard(container) {
-      container.innerHTML = '';
-      for (let i = 0; i < 64; i++) {
-        const square = document.createElement("div");
-        square.className = "square " + ((Math.floor(i / 8) + i) % 2 === 0 ? "light" : "dark");
-        square.dataset.index = i;
-        container.appendChild(square);
+    // Navbar logic (reuse from your main pages)
+    function renderNavbar() {
+      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      const username = localStorage.getItem("username") || "";
+      const nav = document.getElementById('navbar-menu');
+      nav.innerHTML = "";
+      if (!isLoggedIn) {
+        nav.innerHTML = `
+            <a class="nav-link" href="login.html">Login</a>
+            <a class="nav-link" href="signup.html">Sign Up</a>
+        `;
+      } else {
+        nav.innerHTML = `
+            <a class="nav-link" href="index.html">Play Chess</a>
+            <a class="nav-link" href="learn.html">Learn Chess</a>
+            <a class="nav-link" href="profile.html">
+                <span class="profile-avatar">${username.charAt(0).toUpperCase()}</span> ${username || "Profile"}
+            </a>
+            <button class="nav-btn" onclick="logout()">Logout</button>
+        `;
       }
     }
-
-    createBoard(board);
-
-    function resetBoard() {
-      document.querySelectorAll(".square").forEach((sq) => {
-        sq.classList.remove("highlight");
-        sq.textContent = "";
-      });
-    }
-
-    function getPieceSymbol(piece, side) {
-      const code = side[0] + piece[0].toUpperCase(); // e.g. wQ
-      const img = document.createElement("img");
-      img.src = `pieces/${code}.png`;
-      img.alt = code;
-      img.style.width = "40px";
-      img.style.height = "40px";
-      img.draggable = false;
-      return img;
-    }
-
-    function highlightMoves(piece) {
-      resetBoard();
-      const sides = ["white", "black"];
-      const side = sides[Math.floor(Math.random() * 2)];
-      const center = 27;
-      const squares = document.querySelectorAll("#board .square");
-      squares[center].appendChild(getPieceSymbol(piece, side));
-
-      const row = Math.floor(center / 8);
-      const col = center % 8;
-      let offsets = [];
-
-      switch (piece) {
-        case "pawn": offsets = side === "white" ? [-8, -16] : [8, 16]; break;
-        case "rook":
-          for (let i = col + 1; i < 8; i++) offsets.push(row * 8 + i - center);
-          for (let i = col - 1; i >= 0; i--) offsets.push(row * 8 + i - center);
-          for (let i = row + 1; i < 8; i++) offsets.push(i * 8 + col - center);
-          for (let i = row - 1; i >= 0; i--) offsets.push(i * 8 + col - center);
-          break;
-        case "knight": offsets = [-17, -15, -10, -6, 6, 10, 15, 17]; break;
-        case "bishop":
-          for (let dr of [-1, 1]) for (let dc of [-1, 1])
-            for (let i = 1; i < 8; i++) {
-              const r = row + dr * i, c = col + dc * i;
-              if (r >= 0 && r < 8 && c >= 0 && c < 8) offsets.push(r * 8 + c - center);
-              else break;
-            }
-          break;
-        case "queen":
-          highlightMoves("rook");
-          highlightMoves("bishop");
-          return;
-        case "king": offsets = [-1, 1, -8, 8, -9, 9, -7, 7]; break;
-      }
-
-      for (let offset of offsets) {
-        const target = center + offset;
-        if (target >= 0 && target < 64) squares[target]?.classList.add("highlight");
-      }
-
-      const moveExamples = {
-        pawn: { white: "e4, exd5, e8=Q", black: "d5, dxe4, d1=Q" },
-        rook: { white: "Re1, Rxe5, Rd8+", black: "Re8, Rxa4, Rh1#" },
-        knight: { white: "Nf3, Nxd4, Nc6+", black: "Nf6, Nxe4, Nd3+" },
-        bishop: { white: "Be3, Bxf6, Bg5+", black: "Bc5, Bxe4, Bh6" },
-        queen: { white: "Qh5, Qxe4+, Qd8#", black: "Qb6, Qxf2+, Qg1#" },
-        king: { white: "Kf2, Kxe1, O-O", black: "Kf7, Kxd8, O-O-O" }
-      };
-
-      const notationBox = document.getElementById("notationBox");
-      notationBox.innerHTML = '';
-      notationBox.appendChild(getPieceSymbol(piece, side));
-      notationBox.innerHTML += ` <strong>${moveExamples[piece][side]}</strong>`;
-    }
-
-    function startSpeakMode() {
-  const section = document.getElementById("speakSection");
-  section.style.display = "flex";
-  createBoard(speakBoard);
-  loadInitialPosition();
-  
-  // 👇 Smooth scroll into view
-  section.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-  setTimeout(() => {
-      section.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100);
-  
-
-    function loadInitialPosition() {
-      const squares = speakBoard.querySelectorAll(".square");
-      game.reset();
-      squares.forEach(sq => sq.innerHTML = "");
-      const fen = game.fen();
-      const position = fen.split(" ")[0];
-      const rows = position.split("/");
-      rows.forEach((row, r) => {
-        let col = 0;
-        for (const char of row) {
-          if (isNaN(char)) {
-            const color = char === char.toUpperCase() ? 'w' : 'b';
-            const piece = char.toLowerCase();
-            const idx = r * 8 + col;
-            squares[idx].appendChild(getPieceSymbol(piece, color === 'w' ? 'white' : 'black'));
-            col++;
-          } else {
-            col += parseInt(char);
-          }
-        }
-      });
-    }
-
-    function listenForMove() {
-      const speechBox = document.getElementById("speechBox");
-      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = "en-US";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      recognition.onresult = function (event) {
-        const spoken = event.results[0][0].transcript;
-        speechBox.innerHTML = `🗣️ You said: <strong>${spoken}</strong><br/>`;
-
-        try {
-          const move = game.move(spoken, { sloppy: true });
-          if (move) {
-            loadInitialPosition();
-            const from = move.from;
-            const to = move.to;
-            const idxFrom = 8 * (8 - parseInt(from[1])) + (from.charCodeAt(0) - 97);
-            const idxTo = 8 * (8 - parseInt(to[1])) + (to.charCodeAt(0) - 97);
-            const squares = speakBoard.querySelectorAll(".square");
-            squares[idxFrom].classList.add("highlight");
-            squares[idxTo].classList.add("highlight");
-            speechBox.innerHTML += `✅ Move recognized: <strong>${move.san}</strong>`;
-          } else {
-            speechBox.innerHTML += "❌ Invalid move.";
-          }
-        } catch (e) {
-          speechBox.innerHTML += "❌ Couldn't interpret move.";
-        }
-      };
-
-      recognition.onerror = function (err) {
-        speechBox.innerHTML = `⚠️ Error: ${err.error}`;
-      };
-
-      recognition.start();
-      speechBox.innerHTML = "🎤 Listening...";
-    }
-
-    // Navbar logic
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    const username = localStorage.getItem("username") || "";
-    document.getElementById("navbar-menu").innerHTML = isLoggedIn
-      ? `
-        <a href="index.html" class="nav-link">Play Chess</a>
-        <a href="learn.html" class="nav-link">Learn Chess</a>
-        <a href="speakNotation.html" class="nav-link">Speak Moves</a>
-        <a href="profile.html" class="nav-link">
-          <span class="profile-avatar">${username.charAt(0).toUpperCase()}</span> ${username}
-        </a>
-        <button class="nav-btn" onclick="logout()">Logout</button>
-      `
-      : `
-        <a class="nav-link" href="login.html">Login</a>
-        <a class="nav-link" href="signup.html">Sign Up</a>
-      `;
-
     function logout() {
       localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("username");
       location.reload();
     }
+    renderNavbar();
+
+    // --- Chessboard logic for Chapter 1 ---
+    const board = document.getElementById("learnBoard");
+    const PIECES = {
+      pawn: { file: "wP.png", label: 'Pawn', color: 'white' },
+      rook: { file: "wR.png", label: 'Rook', color: 'white' },
+      knight: { file: "wN.png", label: 'Knight', color: 'white' },
+      bishop: { file: "wB.png", label: 'Bishop', color: 'white' },
+      queen: { file: "wQ.png", label: 'Queen', color: 'white' },
+      king: { file: "wK.png", label: 'King', color: 'white' }
+    };
+    // Create empty 8x8 board
+    function createBoard() {
+      board.innerHTML = '';
+      for (let i = 0; i < 64; i++) {
+        const sq = document.createElement('div');
+        sq.className = 'chess-square ' + ((Math.floor(i / 8) + i) % 2 === 0 ? 'light' : 'dark');
+        sq.dataset.idx = i;
+        board.appendChild(sq);
+      }
+    }
+    createBoard();
+
+    function showPieceMoves(pieceKey) {
+      createBoard();
+      // Remove .active from all piece buttons
+      document.querySelectorAll('.piece-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(pieceKey + 'Btn').classList.add('active');
+      // Place piece on d4 (idx 27)
+      const squares = board.querySelectorAll('.chess-square');
+      const centerIdx = 27;
+      squares[centerIdx].innerHTML = '';
+      const img = document.createElement('img');
+      img.src = `pieces/${PIECES[pieceKey].file}`;
+      img.alt = PIECES[pieceKey].label;
+      img.draggable = false;
+      squares[centerIdx].appendChild(img);
+
+      // Highlight moves for each piece
+      const row = Math.floor(centerIdx / 8);
+      const col = centerIdx % 8;
+      let targets = [];
+      switch (pieceKey) {
+        case 'pawn':
+          if (row > 0) targets.push((row - 1) * 8 + col);
+          if (row === 6) targets.push((row - 2) * 8 + col);
+          if (row > 0 && col > 0) targets.push((row - 1) * 8 + (col - 1));
+          if (row > 0 && col < 7) targets.push((row - 1) * 8 + (col + 1));
+          break;
+        case 'rook':
+          for (let c = col + 1; c < 8; c++) targets.push(row * 8 + c);
+          for (let c = col - 1; c >= 0; c--) targets.push(row * 8 + c);
+          for (let r = row + 1; r < 8; r++) targets.push(r * 8 + col);
+          for (let r = row - 1; r >= 0; r--) targets.push(r * 8 + col);
+          break;
+        case 'knight':
+          [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]].forEach(([dr, dc]) => {
+            const r = row + dr, c = col + dc;
+            if (r >= 0 && r < 8 && c >= 0 && c < 8) targets.push(r * 8 + c);
+          });
+          break;
+        case 'bishop':
+          for (let dr of [-1, 1]) for (let dc of [-1, 1])
+            for (let i = 1; i < 8; i++) {
+              const r = row + dr * i, c = col + dc * i;
+              if (r >= 0 && r < 8 && c >= 0 && c < 8) targets.push(r * 8 + c);
+              else break;
+            }
+          break;
+        case 'queen':
+          // Rook-like moves
+          for (let c = col + 1; c < 8; c++) targets.push(row * 8 + c);
+          for (let c = col - 1; c >= 0; c--) targets.push(row * 8 + c);
+          for (let r = row + 1; r < 8; r++) targets.push(r * 8 + col);
+          for (let r = row - 1; r >= 0; r--) targets.push(r * 8 + col);
+          // Bishop-like moves
+          for (let dr of [-1, 1]) for (let dc of [-1, 1])
+            for (let i = 1; i < 8; i++) {
+              const r = row + dr * i, c = col + dc * i;
+              if (r >= 0 && r < 8 && c >= 0 && c < 8) targets.push(r * 8 + c);
+              else break;
+            }
+          break;
+        case 'king':
+          for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+            if (dr === 0 && dc === 0) continue;
+            const r = row + dr, c = col + dc;
+            if (r >= 0 && r < 8 && c >= 0 && c < 8) targets.push(r * 8 + c);
+          }
+          break;
+      }
+      targets.forEach(idx => squares[idx].classList.add('highlight'));
+      document.getElementById('pieceLabel').textContent = PIECES[pieceKey].label + ": " +
+        (
+          {
+            pawn: "Moves forward one square. Captures diagonally. Can move two squares from its starting position.",
+            rook: "Moves any number of squares vertically or horizontally.",
+            knight: "Moves in an 'L' shape: two squares in one direction, then one square perpendicular.",
+            bishop: "Moves diagonally any number of squares.",
+            queen: "Moves like both a rook and a bishop.",
+            king: "Moves one square in any direction."
+          }[pieceKey]
+        );
+    }
+
+    // Set up piece buttons
+    document.getElementById('pawnBtn').onclick = () => showPieceMoves('pawn');
+    document.getElementById('rookBtn').onclick = () => showPieceMoves('rook');
+    document.getElementById('knightBtn').onclick = () => showPieceMoves('knight');
+    document.getElementById('bishopBtn').onclick = () => showPieceMoves('bishop');
+    document.getElementById('queenBtn').onclick = () => showPieceMoves('queen');
+    document.getElementById('kingBtn').onclick = () => showPieceMoves('king');
+
+    // Show pawn by default
+    showPieceMoves('pawn');
   </script>
 </body>
 </html>

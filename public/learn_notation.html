@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Learn Chess Notation | Adaptive Chess</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png">
+    <link rel="stylesheet" href="homePage.css" />
+    <style>
+        body {
+            min-height: 100vh;
+            background: var(--primary);
+        }
+
+        .learn-container {
+            max-width: 1000px;
+            margin: 2.5rem auto;
+            padding: 2rem 1.5rem;
+            background: var(--glass, rgba(36, 41, 68, 0.54));
+            border-radius: 22px;
+            box-shadow: 0 8px 36px 0 #0008, 0 1.5px 12px 0 #9f88ff44;
+            position: relative;
+        }
+
+        .chapter-nav {
+            display: flex;
+            gap: 1.4rem;
+            margin-bottom: 2.6rem;
+            justify-content: center;
+        }
+
+        .chapter-btn {
+            background: linear-gradient(90deg, #9f88ff 60%, #5eead4 100%);
+            color: #181e23;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.04rem;
+            font-weight: bold;
+            padding: 0.7em 1.5em;
+            cursor: pointer;
+            margin: 0 0.2em;
+            box-shadow: 0 2px 12px #5eead433;
+            outline: none;
+            transition: background 0.2s, color 0.2s;
+            opacity: 0.7;
+        }
+
+        .chapter-btn.active {
+            background: linear-gradient(90deg, #facc15 60%, #9f88ff 100%);
+            color: #181e23;
+            opacity: 1;
+            box-shadow: 0 2px 12px #facc1566;
+        }
+
+        .learn-title {
+            font-size: 2rem;
+            color: var(--violet);
+            font-family: Georgia, serif;
+            text-align: center;
+            margin-bottom: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 0.01em;
+            text-shadow: 0 2px 12px #9f88ffaa;
+        }
+
+        .learn-desc {
+            text-align: center;
+            color: #e5e6ff;
+            font-size: 1.12rem;
+            margin-bottom: 2.1rem;
+        }
+
+        .notation-piece-btns {
+            display: flex;
+            gap: 1.1rem;
+            margin-bottom: 1.6rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .notation-piece-btn {
+            background: #22223a;
+            color: #fff;
+            border: 2px solid #5eead4;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: background 0.18s, border 0.18s, box-shadow 0.18s;
+            box-shadow: 0 2px 8px #5eead455;
+            padding: 0;
+        }
+
+        .notation-piece-btn img {
+            width: 70%;
+            height: 70%;
+            object-fit: contain;
+            pointer-events: none;
+            user-select: none;
+            display: block;
+            margin: auto;
+        }
+
+        .notation-piece-btn.active,
+        .notation-piece-btn:hover {
+            background: #5eead4;
+            color: #181e23;
+            border: 2.5px solid #9f88ff;
+            box-shadow: 0 2px 18px #facc1566;
+        }
+
+        .notation-board-wrap {
+            margin-bottom: 1.4rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        #notationBoard {
+            display: grid;
+            grid-template-columns: repeat(8, 48px);
+            grid-template-rows: repeat(8, 48px);
+            border-radius: 10px;
+            box-shadow: none !important;
+            border: none !important;
+            background: transparent !important;
+            overflow: hidden;
+        }
+
+        .notation-square {
+            width: 48px;
+            height: 48px;
+            line-height: 48px;
+            text-align: center;
+            font-size: 1.45rem;
+            font-weight: 700;
+            user-select: none;
+            transition: background 0.18s, box-shadow 0.2s, transform 0.14s;
+            border: none !important;
+            box-shadow: none !important;
+            background-clip: padding-box;
+            padding: 0;
+        }
+
+        .notation-square img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            display: block;
+            margin: auto;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .light {
+            background: #e5e6ff;
+            color: #222;
+        }
+
+        .dark {
+            background: #3a3a4d;
+            color: #eee;
+        }
+
+        .highlight {
+            background: radial-gradient(circle, #facc15 0%, #facc1500 80%);
+            box-shadow: inset 0 0 10px #facc15aa, 0 0 12px #facc15aa;
+            transform: scale(1.08);
+            z-index: 2;
+            border-radius: 6px;
+        }
+
+        .notation-label {
+            font-weight: bold;
+            font-size: 1.08rem;
+            margin-bottom: 0.6rem;
+            color: #facc15;
+            text-align: center;
+            letter-spacing: 0.01em;
+        }
+
+        .notation-box {
+            background: var(--glass, rgba(36, 41, 68, 0.54));
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            text-align: center;
+            font-size: 1.18rem;
+            color: #e5e6ff;
+            margin-bottom: 0.8rem;
+            box-shadow: none !important;
+            max-width: 540px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 0.7rem;
+        }
+
+        .notation-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1.1rem;
+            margin-top: 1.2rem;
+        }
+
+        .notation-controls button {
+            background: linear-gradient(90deg, #9f88ff 60%, #5eead4 100%);
+            color: #181e23;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.06rem;
+            font-weight: 700;
+            padding: 0.5em 1.4em;
+            cursor: pointer;
+            box-shadow: none !important;
+            transition: background 0.18s, color 0.18s;
+        }
+
+        .notation-controls button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 700px) {
+            #notationBoard {
+                grid-template-columns: repeat(8, 36px);
+                grid-template-rows: repeat(8, 36px);
+            }
+
+            .notation-square {
+                width: 36px;
+                height: 36px;
+                font-size: 1.1rem;
+            }
+
+            .notation-square img {
+                width: 80%;
+                height: 80%;
+            }
+
+            .notation-piece-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1.3rem;
+            }
+
+            .notation-piece-btn img {
+                width: 70%;
+                height: 70%;
+            }
+        }
+
+        .board-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .col-labels {
+            display: grid;
+            grid-template-columns: repeat(8, 48px);
+            gap: 0;
+            margin-bottom: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #facc15;
+            text-align: center;
+        }
+
+        .row-with-labels {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .row-labels {
+            display: grid;
+            grid-template-rows: repeat(8, 48px);
+            gap: 0;
+            margin-right: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #facc15;
+            text-align: center;
+            line-height: 48px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-animated"></div>
+    <nav class="navbar">
+        <a href="homePage.html" class="brand">
+            <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" alt="Chess Logo" />
+            <span>Adaptive Chess</span>
+        </a>
+        <div class="navbar-menu" id="navbar-menu"></div>
+    </nav>
+    <main>
+        <div class="learn-container">
+            <div class="chapter-nav">
+                <button class="chapter-btn" onclick="window.location.href='learn.html'">1. How Pieces Move</button>
+                <button class="chapter-btn" onclick="window.location.href='learn_special.html'">2. Special
+                    Moves</button>
+                <button class="chapter-btn active" disabled>3. Notation</button>
+            </div>
+            <div class="learn-title">Chess Notation Demonstration</div>
+            <div class="learn-desc">
+                Click a piece below to see example notations for its main moves.<br>
+                Use the <b>Next</b> button to step through move, capture, and special notations.
+            </div>
+            <div class="notation-piece-btns">
+                <button class="notation-piece-btn" id="pawnBtn" title="Pawn"><img src="pieces/wP.png"
+                        alt="Pawn"></button>
+                <button class="notation-piece-btn" id="rookBtn" title="Rook"><img src="pieces/wR.png"
+                        alt="Rook"></button>
+                <button class="notation-piece-btn" id="knightBtn" title="Knight"><img src="pieces/wN.png"
+                        alt="Knight"></button>
+                <button class="notation-piece-btn" id="bishopBtn" title="Bishop"><img src="pieces/wB.png"
+                        alt="Bishop"></button>
+                <button class="notation-piece-btn" id="queenBtn" title="Queen"><img src="pieces/wQ.png"
+                        alt="Queen"></button>
+                <button class="notation-piece-btn" id="kingBtn" title="King"><img src="pieces/wK.png"
+                        alt="King"></button>
+            </div>
+            <div class="notation-label" id="notationLabel"></div>
+            <div class="notation-box" id="notationBox"></div>
+            <div class="notation-board-wrap">
+                <div class="board-grid">
+                    <!-- Top labels a–h -->
+                    <div class="col-labels">
+                        <span>a</span><span>b</span><span>c</span><span>d</span>
+                        <span>e</span><span>f</span><span>g</span><span>h</span>
+                    </div>
+                    <div class="row-with-labels">
+                        <!-- Left labels 8–1 -->
+                        <div class="row-labels">
+                            <span>8</span><span>7</span><span>6</span><span>5</span>
+                            <span>4</span><span>3</span><span>2</span><span>1</span>
+                        </div>
+                        <!-- Actual board -->
+                        <div id="notationBoard"></div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="notation-controls">
+                <button id="notationPrevBtn" onclick="prevNotationStep()">⟨ Prev</button>
+                <button id="notationNextBtn" onclick="nextNotationStep()">Next ⟩</button>
+            </div>
+        </div>
+    </main>
+    <!-- 🔽 In your <script> section near the end -->
+    <script>
+        // Navbar logic
+        function renderNavbar() {
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+            const username = localStorage.getItem("username") || "";
+            const nav = document.getElementById('navbar-menu');
+            nav.innerHTML = "";
+            if (!isLoggedIn) {
+                nav.innerHTML = `
+                <a class="nav-link" href="login.html">Login</a>
+                <a class="nav-link" href="signup.html">Sign Up</a>
+            `;
+            } else {
+                nav.innerHTML = `
+                <a class="nav-link" href="index.html">Play Chess</a>
+                <a class="nav-link" href="learn.html">Learn Chess</a>
+                <a class="nav-link" href="profile.html">
+                    <span class="profile-avatar">${username.charAt(0).toUpperCase()}</span> ${username || "Profile"}
+                </a>
+                <button class="nav-btn" onclick="logout()">Logout</button>
+            `;
+            }
+        }
+        function logout() {
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("username");
+            location.reload();
+        }
+        renderNavbar();
+
+        const PIECE_IMG = {
+            wP: 'pieces/wP.png', wR: 'pieces/wR.png', wN: 'pieces/wN.png', wB: 'pieces/wB.png',
+            wQ: 'pieces/wQ.png', wK: 'pieces/wK.png', bP: 'pieces/bP.png', bR: 'pieces/bR.png',
+            bN: 'pieces/bN.png', bB: 'pieces/bB.png', bQ: 'pieces/bQ.png', bK: 'pieces/bK.png'
+        };
+
+        const notationExamples = {
+            pawn: [
+                {
+                    label: "Pawn advances: e4",
+                    desc: "This move is written as <b>e4</b> in algebraic notation.",
+                    pieces: { 52: "wP" }, // e2
+                    highlights: [52, 36], // e2, e4
+                    move: [52, 36],
+                    notation: "e4"
+                },
+                {
+                    label: "Pawn captures: exd5",
+                    desc: "Pawn captures on d5. Notation: <b>exd5</b> (pawn from e-file captures on d5).",
+                    pieces: { 36: "wP", 27: "bP" }, // white pawn on e4, black pawn on d5
+                    highlights: [36, 27],
+                    move: [36, 27],
+                    notation: "e x d5"
+                },
+                {
+                    label: "En Passant: exd6 ",
+                    desc: "En passant capture. Notation: <b>exd6 e.p.</b> (pawn from e-file captures on d6, en passant).",
+                    pieces: { 28: "wP", 27: "bP" }, // wP on e5, bP on d5
+                    highlights: [28, 27, 19], // e5, d6, d5
+                    move: [28, 27],
+                    notation: "e x d6 "
+                },
+                {
+                    label: "Promotion: e8=Q",
+                    desc: "Pawn promotes to a queen. Notation: <b>e8=Q</b>.",
+                    pieces: { 12: "wP" }, // e7
+                    highlights: [12, 4], // e7, e8
+                    move: [12, 4],
+                    promotion: "wQ",
+                    notation: "e8=Q"
+                }
+            ],
+            rook: [
+                {
+                    label: "Rook moves: Ra5",
+                    desc: "Rook moves from a1 to a5. Notation: <b>Ra5</b>.",
+                    pieces: { 56: "wR" }, // a1
+                    highlights: [56, 24], // a1, a5
+                    move: [56, 24],
+                    notation: "Ra5"
+                },
+                {
+                    label: "Rook captures: Rxa7",
+                    desc: "Rook captures on a7. Notation: <b>Rxa7</b>.",
+                    pieces: { 24: "wR", 8: "bN" }, // rook on a5, black knight on b7
+                    highlights: [24, 8],
+                    move: [24, 8],
+                    notation: "R x a7"
+                }
+            ],
+            knight: [
+                {
+                    label: "Knight moves: Nf3",
+                    desc: "Knight moves from g1 to f3. Notation: <b>Nf3</b>.",
+                    pieces: { 62: "wN" }, // g1
+                    highlights: [62, 45], // g1, f3
+                    move: [62, 45],
+                    notation: "Nf3"
+                },
+                {
+                    label: "Knight captures: Nxe5",
+                    desc: "Knight captures on e5. Notation: <b>Nxe5</b>.",
+                    pieces: { 45: "wN", 28: "bP" }, // white knight on f3, black pawn on e5
+                    highlights: [45, 28],
+                    move: [45, 28],
+                    notation: "N x e5"
+                }
+            ],
+            bishop: [
+                {
+                    label: "Bishop moves: Bb5",
+                    desc: "Bishop moves from f1 to b5. Notation: <b>Bb5</b>.",
+                    pieces: { 61: "wB" }, // f1
+                    highlights: [61, 25], // f1, b5
+                    move: [61, 25],
+                    notation: "Bb5"
+                },
+                {
+                    label: "Bishop captures: Bxc6",
+                    desc: "Bishop captures on c6. Notation: <b>Bxc6</b>.",
+                    pieces: { 25: "wB", 18: "bN" }, // bishop on b5, black knight on c6
+                    highlights: [25, 18],
+                    move: [25, 18],
+                    notation: "B x c6"
+                }
+            ],
+            queen: [
+                {
+                    label: "Queen moves: Qh5",
+                    desc: "Queen moves from d1 to h5. Notation: <b>Qh5</b>.",
+                    pieces: { 59: "wQ" }, // d1
+                    highlights: [59, 31], // d1, h5
+                    move: [59, 31],
+                    notation: "Qh5"
+                },
+                {
+                    label: "Queen captures: Qxf7",
+                    desc: "Queen captures on f7. Notation: <b>Qxf7</b>.",
+                    pieces: { 31: "wQ", 13: "bP" }, // queen on h5, black pawn on f7
+                    highlights: [31, 13],
+                    move: [31, 13],
+                    notation: "Q x f7"
+                }
+            ],
+            king: [
+                {
+                    label: "King moves: Kf2",
+                    desc: "King moves from e1 to f2. Notation: <b>Kf2</b>.",
+                    pieces: { 60: "wK" }, // e1
+                    highlights: [60, 53], // e1, f2
+                    move: [60, 53],
+                    notation: "Kf2"
+                },
+                {
+                    label: "King captures: Kxe3",
+                    desc: "King captures on e3. Notation: <b>Kxe3</b>.",
+                    pieces: { 53: "wK", 44: "bN" }, // king on f2, black knight on e3
+                    highlights: [53, 44],
+                    move: [53, 44],
+                    notation: "K x e3"
+                }
+            ]
+        };
+
+        let currentPiece = 'pawn';
+        let currentStep = 0;
+
+        function createNotationBoard() {
+            const board = document.getElementById('notationBoard');
+            board.innerHTML = '';
+            for (let i = 0; i < 64; i++) {
+                const sq = document.createElement('div');
+                sq.className = 'notation-square ' + ((Math.floor(i / 8) + i) % 2 === 0 ? 'light' : 'dark');
+                sq.dataset.idx = i;
+                board.appendChild(sq);
+            }
+        }
+
+        function say(text) {
+            if ('speechSynthesis' in window && text) {
+                window.speechSynthesis.cancel();
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'en-US';
+                utter.rate = 1.02;
+                utter.pitch = 1;
+                window.speechSynthesis.speak(utter);
+            }
+        }
+
+        function renderNotationBoard() {
+            createNotationBoard();
+            const board = document.getElementById('notationBoard');
+            const stepObj = notationExamples[currentPiece][currentStep];
+
+            // Place pieces
+            if (stepObj && stepObj.pieces) {
+                Object.entries(stepObj.pieces).forEach(([idx, piece]) => {
+                    const square = board.children[idx];
+                    square.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = PIECE_IMG[piece];
+                    img.alt = piece;
+                    img.draggable = false;
+                    square.appendChild(img);
+                });
+            }
+
+            // Highlight squares
+            if (stepObj && stepObj.highlights) {
+                stepObj.highlights.forEach(idx => {
+                    board.children[idx].classList.add('highlight');
+                });
+            }
+
+            // Set labels/texts
+            const labelEl = document.getElementById('notationLabel');
+            const boxEl = document.getElementById('notationBox');
+
+            // Prevent screen reader from reading label/box
+            labelEl.setAttribute('aria-hidden', 'true');
+            boxEl.setAttribute('aria-hidden', 'true');
+            labelEl.setAttribute('role', 'presentation');
+            boxEl.setAttribute('role', 'presentation');
+
+            // Avoid innerHTML to suppress accessibility reader
+            labelEl.textContent = stepObj.label || '';
+            boxEl.textContent = stepObj.desc ? stepObj.desc.replace(/<[^>]*>?/gm, '') : '';
+
+            // Disable next/prev
+            document.getElementById('notationNextBtn').disabled = (currentStep === notationExamples[currentPiece].length - 1);
+            document.getElementById('notationPrevBtn').disabled = (currentStep === 0);
+
+            // Only say the notation (e.g., "e4")
+            say(stepObj.notation);
+        }
+
+        function selectNotationPiece(piece) {
+            currentPiece = piece;
+            currentStep = 0;
+            document.querySelectorAll('.notation-piece-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(piece + 'Btn').classList.add('active');
+            renderNotationBoard();
+        }
+
+        function nextNotationStep() {
+            if (currentStep < notationExamples[currentPiece].length - 1) {
+                currentStep++;
+                renderNotationBoard();
+            }
+        }
+
+        function prevNotationStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderNotationBoard();
+            }
+        }
+
+        // Setup
+        document.getElementById('pawnBtn').onclick = () => selectNotationPiece('pawn');
+        document.getElementById('rookBtn').onclick = () => selectNotationPiece('rook');
+        document.getElementById('knightBtn').onclick = () => selectNotationPiece('knight');
+        document.getElementById('bishopBtn').onclick = () => selectNotationPiece('bishop');
+        document.getElementById('queenBtn').onclick = () => selectNotationPiece('queen');
+        document.getElementById('kingBtn').onclick = () => selectNotationPiece('king');
+
+        selectNotationPiece('pawn');
+    </script>
+
+</body>
+
+</html>
