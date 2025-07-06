@@ -98,9 +98,12 @@
         function logout() {
             localStorage.removeItem("isLoggedIn");
             localStorage.removeItem("username");
-            location.reload();
+                window.location.href = "homePage.html"; // Explicit redirect
+
         }
-        renderNavbar();
+      window.addEventListener("pageshow", function () {
+    renderNavbar();
+});
 
         function goToPlay() {
             window.location.href = 'index.html';

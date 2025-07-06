@@ -1,407 +1,491 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-store, no-cache, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Learn Chess - How Pieces Move | Adaptive Chess</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png">
-  <link rel="stylesheet" href="homePage.css" />
-  <style>
-    body {
-      min-height: 100vh;
-      background: var(--primary);
-    }
-
-    .learn-container {
-      max-width: 1000px;
-      margin: 2.5rem auto;
-      padding: 2rem 1.5rem;
-      background: var(--glass, rgba(36, 41, 68, 0.54));
-      border-radius: 22px;
-      box-shadow: 0 8px 36px 0 #0008, 0 1.5px 12px 0 #9f88ff44;
-      position: relative;
-    }
-
-    .chapter-nav {
-      display: flex;
-      gap: 1.4rem;
-      margin-bottom: 2.6rem;
-      justify-content: center;
-    }
-
-    .chapter-btn {
-      background: linear-gradient(90deg, #9f88ff 60%, #5eead4 100%);
-      color: #181e23;
-      border: none;
-      border-radius: 8px;
-      font-size: 1.04rem;
-      font-weight: bold;
-      padding: 0.7em 1.5em;
-      cursor: pointer;
-      margin: 0 0.2em;
-      box-shadow: 0 2px 12px #5eead433;
-      outline: none;
-      transition: background 0.2s, color 0.2s;
-      opacity: 0.7;
-    }
-
-    .chapter-btn.active {
-      background: linear-gradient(90deg, #facc15 60%, #9f88ff 100%);
-      color: #181e23;
-      opacity: 1;
-      box-shadow: 0 2px 12px #facc1566;
-    }
-
-    .learn-title {
-      font-size: 2rem;
-      color: var(--violet);
-      font-family: Georgia, serif;
-      text-align: center;
-      margin-bottom: 0.7rem;
-      font-weight: bold;
-      letter-spacing: 0.01em;
-      text-shadow: 0 2px 12px #9f88ffaa;
-    }
-
-    .learn-desc {
-      text-align: center;
-      color: #e5e6ff;
-      font-size: 1.12rem;
-      margin-bottom: 2.1rem;
-    }
-
-    .board-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .piece-btns {
-      display: flex;
-      gap: 1.1rem;
-      margin-bottom: 1.6rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .piece-btn {
-      background: #22223a;
-      color: #fff;
-      border: 2px solid #5eead4;
-      border-radius: 50%;
-      width: 48px;
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      cursor: pointer;
-      transition: background 0.18s, border 0.18s, box-shadow 0.18s;
-      box-shadow: 0 2px 8px #5eead455;
-      padding: 0;
-    }
-
-    .piece-btn img {
-      width: 70%;
-      height: 70%;
-      object-fit: contain;
-      pointer-events: none;
-      user-select: none;
-      display: block;
-      margin: auto;
-    }
-
-    .piece-btn.active,
-    .piece-btn:hover {
-      background: #5eead4;
-      color: #181e23;
-      border: 2.5px solid #9f88ff;
-      box-shadow: 0 2px 18px #facc1566;
-    }
-
-    .board-wrap {
-      margin-bottom: 1.4rem;
-    }
-
-    #learnBoard {
-      display: grid;
-      grid-template-columns: repeat(8, 48px);
-      grid-template-rows: repeat(8, 48px);
-      border-radius: 10px;
-      box-shadow: 0 2px 24px #0007;
-      overflow: hidden;
-      background: #22223a;
-    }
-
-    .chess-square {
-      width: 48px;
-      height: 48px;
-      line-height: 48px;
-      text-align: center;
-      font-size: 1.45rem;
-      font-weight: 700;
-      user-select: none;
-      transition: background 0.18s, box-shadow 0.2s, transform 0.14s;
-      padding: 0;
-    }
-
-    .chess-square img {
-      width: 80%;
-      height: 80%;
-      object-fit: contain;
-      display: block;
-      margin: auto;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    .light {
-      background: #e5e6ff;
-      color: #222;
-    }
-
-    .dark {
-      background: #3a3a4d;
-      color: #eee;
-    }
-
-    .highlight {
-      background: radial-gradient(circle, #facc15 0%, #facc1500 80%);
-      box-shadow: inset 0 0 10px #facc15aa, 0 0 12px #facc15aa;
-      transform: scale(1.08);
-      z-index: 2;
-      border-radius: 6px;
-    }
-
-    .piece-label {
-      font-weight: bold;
-      font-size: 1.08rem;
-      margin-bottom: 0.6rem;
-      color: #facc15;
-      text-align: center;
-      letter-spacing: 0.01em;
-    }
-
-    @media (max-width: 700px) {
-      .learn-container {
-        padding: 0.7rem 0.2rem;
+    <title>Learn Chess - How Pieces Move | Adaptive Chess</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      href="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png"
+    />
+    <link rel="stylesheet" href="homePage.css" />
+    <style>
+      body {
+        min-height: 100vh;
+        background: var(--primary);
       }
 
-      #learnBoard {
-        grid-template-columns: repeat(8, 36px);
-        grid-template-rows: repeat(8, 36px);
+      .learn-container {
+        max-width: 1000px;
+        margin: 2.5rem auto;
+        padding: 2rem 1.5rem;
+        background: var(--glass, rgba(36, 41, 68, 0.54));
+        border-radius: 22px;
+        box-shadow: 0 8px 36px 0 #0008, 0 1.5px 12px 0 #9f88ff44;
+        position: relative;
+      }
+
+      .chapter-nav {
+        display: flex;
+        gap: 1.4rem;
+        margin-bottom: 2.6rem;
+        justify-content: center;
+      }
+
+      .chapter-btn {
+        background: linear-gradient(90deg, #9f88ff 60%, #5eead4 100%);
+        color: #181e23;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.04rem;
+        font-weight: bold;
+        padding: 0.7em 1.5em;
+        cursor: pointer;
+        margin: 0 0.2em;
+        box-shadow: 0 2px 12px #5eead433;
+        outline: none;
+        transition: background 0.2s, color 0.2s;
+        opacity: 0.7;
+      }
+
+      .chapter-btn.active {
+        background: linear-gradient(90deg, #facc15 60%, #9f88ff 100%);
+        color: #181e23;
+        opacity: 1;
+        box-shadow: 0 2px 12px #facc1566;
+      }
+
+      .learn-title {
+        font-size: 2rem;
+        color: var(--violet);
+        font-family: Georgia, serif;
+        text-align: center;
+        margin-bottom: 0.7rem;
+        font-weight: bold;
+        letter-spacing: 0.01em;
+        text-shadow: 0 2px 12px #9f88ffaa;
+      }
+
+      .learn-desc {
+        text-align: center;
+        color: #e5e6ff;
+        font-size: 1.12rem;
+        margin-bottom: 2.1rem;
       }
 
       .board-section {
-        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .piece-btns {
+        display: flex;
+        gap: 1.1rem;
+        margin-bottom: 1.6rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .piece-btn {
+        background: #22223a;
+        color: #fff;
+        border: 2px solid #5eead4;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        cursor: pointer;
+        transition: background 0.18s, border 0.18s, box-shadow 0.18s;
+        box-shadow: 0 2px 8px #5eead455;
+        padding: 0;
+      }
+
+      .piece-btn img {
+        width: 70%;
+        height: 70%;
+        object-fit: contain;
+        pointer-events: none;
+        user-select: none;
+        display: block;
+        margin: auto;
+      }
+
+      .piece-btn.active,
+      .piece-btn:hover {
+        background: #5eead4;
+        color: #181e23;
+        border: 2.5px solid #9f88ff;
+        box-shadow: 0 2px 18px #facc1566;
+      }
+
+      .board-wrap {
+        margin-bottom: 1.4rem;
+      }
+
+      #learnBoard {
+        display: grid;
+        grid-template-columns: repeat(8, 48px);
+        grid-template-rows: repeat(8, 48px);
+        border-radius: 10px;
+        box-shadow: 0 2px 24px #0007;
+        overflow: hidden;
+        background: #22223a;
       }
 
       .chess-square {
-        width: 36px;
-        height: 36px;
-        font-size: 1.1rem;
+        width: 48px;
+        height: 48px;
+        line-height: 48px;
+        text-align: center;
+        font-size: 1.45rem;
+        font-weight: 700;
+        user-select: none;
+        transition: background 0.18s, box-shadow 0.2s, transform 0.14s;
+        padding: 0;
       }
 
       .chess-square img {
         width: 80%;
         height: 80%;
+        object-fit: contain;
+        display: block;
+        margin: auto;
+        pointer-events: none;
+        user-select: none;
       }
 
-      .piece-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 1.3rem;
+      .light {
+        background: #e5e6ff;
+        color: #222;
       }
-      .piece-btn img {
-        width: 70%;
-        height: 70%;
-      }
-    }
-  </style>
-</head>
 
-<body>
-  <div class="bg-animated"></div>
-  <nav class="navbar">
-    <a href="homePage.html" class="brand">
-      <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" alt="Chess Logo" />
-      <span>Adaptive Chess</span>
-    </a>
-    <div class="navbar-menu" id="navbar-menu"></div>
-  </nav>
-  <main>
-    <div class="learn-container">
-      <div class="chapter-nav">
-        <button class="chapter-btn active" disabled>1. How Pieces Move</button>
-        <button class="chapter-btn" onclick="window.location.href='learn_special.html'">2. Special Moves</button>
-        <button class="chapter-btn" onclick="window.location.href='learn_notation.html'">3. Notation</button>
-      </div>
-      <div class="learn-title">How Chess Pieces Move</div>
-      <div class="learn-desc">
-        Select a chess piece below to see how it moves on the board.<br>
-        The highlighted squares show where that piece can move from its current position.
-      </div>
-      <div class="board-section">
-        <div class="piece-btns">
-          <button class="piece-btn" id="pawnBtn" title="Pawn"><img src="pieces/wP.png" alt="Pawn"></button>
-          <button class="piece-btn" id="rookBtn" title="Rook"><img src="pieces/wR.png" alt="Rook"></button>
-          <button class="piece-btn" id="knightBtn" title="Knight"><img src="pieces/wN.png" alt="Knight"></button>
-          <button class="piece-btn" id="bishopBtn" title="Bishop"><img src="pieces/wB.png" alt="Bishop"></button>
-          <button class="piece-btn" id="queenBtn" title="Queen"><img src="pieces/wQ.png" alt="Queen"></button>
-          <button class="piece-btn" id="kingBtn" title="King"><img src="pieces/wK.png" alt="King"></button>
-        </div>
-        <div class="piece-label" id="pieceLabel"></div>
-        <div class="board-wrap">
-          <div id="learnBoard"></div>
-        </div>
-      </div>
-    </div>
-  </main>
-  <script>
-    // Navbar logic (reuse from your main pages)
-    function renderNavbar() {
+      .dark {
+        background: #3a3a4d;
+        color: #eee;
+      }
+
+      .highlight {
+        background: radial-gradient(circle, #facc15 0%, #facc1500 80%);
+        box-shadow: inset 0 0 10px #facc15aa, 0 0 12px #facc15aa;
+        transform: scale(1.08);
+        z-index: 2;
+        border-radius: 6px;
+      }
+
+      .piece-label {
+        font-weight: bold;
+        font-size: 1.08rem;
+        margin-bottom: 0.6rem;
+        color: #facc15;
+        text-align: center;
+        letter-spacing: 0.01em;
+      }
+
+      @media (max-width: 700px) {
+        .learn-container {
+          padding: 0.7rem 0.2rem;
+        }
+
+        #learnBoard {
+          grid-template-columns: repeat(8, 36px);
+          grid-template-rows: repeat(8, 36px);
+        }
+
+        .board-section {
+          min-width: 0;
+        }
+
+        .chess-square {
+          width: 36px;
+          height: 36px;
+          font-size: 1.1rem;
+        }
+
+        .chess-square img {
+          width: 80%;
+          height: 80%;
+        }
+
+        .piece-btn {
+          width: 36px;
+          height: 36px;
+          font-size: 1.3rem;
+        }
+        .piece-btn img {
+          width: 70%;
+          height: 70%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <script>
+      // Redirect unauthenticated users
       const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-      const username = localStorage.getItem("username") || "";
-      const nav = document.getElementById('navbar-menu');
-      nav.innerHTML = "";
       if (!isLoggedIn) {
-        nav.innerHTML = `
+        window.location.replace("homePage.html");
+        alert("Please log in to learn how to play");
+  
+      }
+    </script>
+
+    <div class="bg-animated"></div>
+    <nav class="navbar">
+      <a href="homePage.html" class="brand">
+        <img
+          src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png"
+          alt="Chess Logo"
+        />
+        <span>Adaptive Chess</span>
+      </a>
+      <div class="navbar-menu" id="navbar-menu"></div>
+    </nav>
+    <main>
+      <div class="learn-container">
+        <div class="chapter-nav">
+          <button class="chapter-btn active" disabled>
+            1. How Pieces Move
+          </button>
+          <button
+            class="chapter-btn"
+            onclick="window.location.href='learn_special.html'"
+          >
+            2. Special Moves
+          </button>
+          <button
+            class="chapter-btn"
+            onclick="window.location.href='learn_notation.html'"
+          >
+            3. Notation
+          </button>
+        </div>
+        <div class="learn-title">How Chess Pieces Move</div>
+        <div class="learn-desc">
+          Select a chess piece below to see how it moves on the board.<br />
+          The highlighted squares show where that piece can move from its
+          current position.
+        </div>
+        <div class="board-section">
+          <div class="piece-btns">
+            <button class="piece-btn" id="pawnBtn" title="Pawn">
+              <img src="pieces/wP.png" alt="Pawn" />
+            </button>
+            <button class="piece-btn" id="rookBtn" title="Rook">
+              <img src="pieces/wR.png" alt="Rook" />
+            </button>
+            <button class="piece-btn" id="knightBtn" title="Knight">
+              <img src="pieces/wN.png" alt="Knight" />
+            </button>
+            <button class="piece-btn" id="bishopBtn" title="Bishop">
+              <img src="pieces/wB.png" alt="Bishop" />
+            </button>
+            <button class="piece-btn" id="queenBtn" title="Queen">
+              <img src="pieces/wQ.png" alt="Queen" />
+            </button>
+            <button class="piece-btn" id="kingBtn" title="King">
+              <img src="pieces/wK.png" alt="King" />
+            </button>
+          </div>
+          <div class="piece-label" id="pieceLabel"></div>
+          <div class="board-wrap">
+            <div id="learnBoard"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      // Prevent back button from showing cached page
+      window.addEventListener("pageshow", function (event) {
+        if (event.persisted || window.performance.navigation.type === 2) {
+          window.location.reload();
+        }
+      });
+
+      // Navbar logic (reuse from your main pages)
+      function renderNavbar() {
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        const username = localStorage.getItem("username") || "";
+        const nav = document.getElementById("navbar-menu");
+        nav.innerHTML = "";
+        if (!isLoggedIn) {
+          nav.innerHTML = `
             <a class="nav-link" href="login.html">Login</a>
             <a class="nav-link" href="signup.html">Sign Up</a>
         `;
-      } else {
-        nav.innerHTML = `
+        } else {
+          nav.innerHTML = `
             <a class="nav-link" href="index.html">Play Chess</a>
             <a class="nav-link" href="learn.html">Learn Chess</a>
             <a class="nav-link" href="profile.html">
-                <span class="profile-avatar">${username.charAt(0).toUpperCase()}</span> ${username || "Profile"}
+                <span class="profile-avatar">${username
+                  .charAt(0)
+                  .toUpperCase()}</span> ${username || "Profile"}
             </a>
             <button class="nav-btn" onclick="logout()">Logout</button>
         `;
+        }
       }
-    }
-    function logout() {
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("username");
-      location.reload();
-    }
-    renderNavbar();
-
-    // --- Chessboard logic for Chapter 1 ---
-    const board = document.getElementById("learnBoard");
-    const PIECES = {
-      pawn: { file: "wP.png", label: 'Pawn', color: 'white' },
-      rook: { file: "wR.png", label: 'Rook', color: 'white' },
-      knight: { file: "wN.png", label: 'Knight', color: 'white' },
-      bishop: { file: "wB.png", label: 'Bishop', color: 'white' },
-      queen: { file: "wQ.png", label: 'Queen', color: 'white' },
-      king: { file: "wK.png", label: 'King', color: 'white' }
-    };
-    // Create empty 8x8 board
-    function createBoard() {
-      board.innerHTML = '';
-      for (let i = 0; i < 64; i++) {
-        const sq = document.createElement('div');
-        sq.className = 'chess-square ' + ((Math.floor(i / 8) + i) % 2 === 0 ? 'light' : 'dark');
-        sq.dataset.idx = i;
-        board.appendChild(sq);
+      function logout() {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("username");
+        sessionStorage.clear(); // optional: clear anything else
+        window.location.replace("homePage.html"); // replaces current history entry
       }
-    }
-    createBoard();
+      renderNavbar();
 
-    function showPieceMoves(pieceKey) {
+      // --- Chessboard logic for Chapter 1 ---
+      const board = document.getElementById("learnBoard");
+      const PIECES = {
+        pawn: { file: "wP.png", label: "Pawn", color: "white" },
+        rook: { file: "wR.png", label: "Rook", color: "white" },
+        knight: { file: "wN.png", label: "Knight", color: "white" },
+        bishop: { file: "wB.png", label: "Bishop", color: "white" },
+        queen: { file: "wQ.png", label: "Queen", color: "white" },
+        king: { file: "wK.png", label: "King", color: "white" },
+      };
+
+      // Create empty 8x8 board
+      function createBoard() {
+        board.innerHTML = "";
+        for (let i = 0; i < 64; i++) {
+          const sq = document.createElement("div");
+          sq.className =
+            "chess-square " +
+            ((Math.floor(i / 8) + i) % 2 === 0 ? "light" : "dark");
+          sq.dataset.idx = i;
+          board.appendChild(sq);
+        }
+      }
       createBoard();
-      // Remove .active from all piece buttons
-      document.querySelectorAll('.piece-btn').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(pieceKey + 'Btn').classList.add('active');
-      // Place piece on d4 (idx 27)
-      const squares = board.querySelectorAll('.chess-square');
-      const centerIdx = 27;
-      squares[centerIdx].innerHTML = '';
-      const img = document.createElement('img');
-      img.src = `pieces/${PIECES[pieceKey].file}`;
-      img.alt = PIECES[pieceKey].label;
-      img.draggable = false;
-      squares[centerIdx].appendChild(img);
 
-      // Highlight moves for each piece
-      const row = Math.floor(centerIdx / 8);
-      const col = centerIdx % 8;
-      let targets = [];
-      switch (pieceKey) {
-        case 'pawn':
-          if (row > 0) targets.push((row - 1) * 8 + col);
-          if (row === 6) targets.push((row - 2) * 8 + col);
-          if (row > 0 && col > 0) targets.push((row - 1) * 8 + (col - 1));
-          if (row > 0 && col < 7) targets.push((row - 1) * 8 + (col + 1));
-          break;
-        case 'rook':
-          for (let c = col + 1; c < 8; c++) targets.push(row * 8 + c);
-          for (let c = col - 1; c >= 0; c--) targets.push(row * 8 + c);
-          for (let r = row + 1; r < 8; r++) targets.push(r * 8 + col);
-          for (let r = row - 1; r >= 0; r--) targets.push(r * 8 + col);
-          break;
-        case 'knight':
-          [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]].forEach(([dr, dc]) => {
-            const r = row + dr, c = col + dc;
-            if (r >= 0 && r < 8 && c >= 0 && c < 8) targets.push(r * 8 + c);
-          });
-          break;
-        case 'bishop':
-          for (let dr of [-1, 1]) for (let dc of [-1, 1])
-            for (let i = 1; i < 8; i++) {
-              const r = row + dr * i, c = col + dc * i;
+      function showPieceMoves(pieceKey) {
+        createBoard();
+        // Remove .active from all piece buttons
+        document
+          .querySelectorAll(".piece-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        document.getElementById(pieceKey + "Btn").classList.add("active");
+        // Place piece on d4 (idx 27)
+        const squares = board.querySelectorAll(".chess-square");
+        const centerIdx = 27;
+        squares[centerIdx].innerHTML = "";
+        const img = document.createElement("img");
+        img.src = `pieces/${PIECES[pieceKey].file}`;
+        img.alt = PIECES[pieceKey].label;
+        img.draggable = false;
+        squares[centerIdx].appendChild(img);
+
+        // Highlight moves for each piece
+        const row = Math.floor(centerIdx / 8);
+        const col = centerIdx % 8;
+        let targets = [];
+        switch (pieceKey) {
+          case "pawn":
+            if (row > 0) targets.push((row - 1) * 8 + col);
+            if (row === 6) targets.push((row - 2) * 8 + col);
+            if (row > 0 && col > 0) targets.push((row - 1) * 8 + (col - 1));
+            if (row > 0 && col < 7) targets.push((row - 1) * 8 + (col + 1));
+            break;
+          case "rook":
+            for (let c = col + 1; c < 8; c++) targets.push(row * 8 + c);
+            for (let c = col - 1; c >= 0; c--) targets.push(row * 8 + c);
+            for (let r = row + 1; r < 8; r++) targets.push(r * 8 + col);
+            for (let r = row - 1; r >= 0; r--) targets.push(r * 8 + col);
+            break;
+          case "knight":
+            [
+              [-2, -1],
+              [-2, 1],
+              [-1, -2],
+              [-1, 2],
+              [1, -2],
+              [1, 2],
+              [2, -1],
+              [2, 1],
+            ].forEach(([dr, dc]) => {
+              const r = row + dr,
+                c = col + dc;
               if (r >= 0 && r < 8 && c >= 0 && c < 8) targets.push(r * 8 + c);
-              else break;
-            }
-          break;
-        case 'queen':
-          // Rook-like moves
-          for (let c = col + 1; c < 8; c++) targets.push(row * 8 + c);
-          for (let c = col - 1; c >= 0; c--) targets.push(row * 8 + c);
-          for (let r = row + 1; r < 8; r++) targets.push(r * 8 + col);
-          for (let r = row - 1; r >= 0; r--) targets.push(r * 8 + col);
-          // Bishop-like moves
-          for (let dr of [-1, 1]) for (let dc of [-1, 1])
-            for (let i = 1; i < 8; i++) {
-              const r = row + dr * i, c = col + dc * i;
-              if (r >= 0 && r < 8 && c >= 0 && c < 8) targets.push(r * 8 + c);
-              else break;
-            }
-          break;
-        case 'king':
-          for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
-            if (dr === 0 && dc === 0) continue;
-            const r = row + dr, c = col + dc;
-            if (r >= 0 && r < 8 && c >= 0 && c < 8) targets.push(r * 8 + c);
-          }
-          break;
-      }
-      targets.forEach(idx => squares[idx].classList.add('highlight'));
-      document.getElementById('pieceLabel').textContent = PIECES[pieceKey].label + ": " +
-        (
+            });
+            break;
+          case "bishop":
+            for (let dr of [-1, 1])
+              for (let dc of [-1, 1])
+                for (let i = 1; i < 8; i++) {
+                  const r = row + dr * i,
+                    c = col + dc * i;
+                  if (r >= 0 && r < 8 && c >= 0 && c < 8)
+                    targets.push(r * 8 + c);
+                  else break;
+                }
+            break;
+          case "queen":
+            // Rook-like moves
+            for (let c = col + 1; c < 8; c++) targets.push(row * 8 + c);
+            for (let c = col - 1; c >= 0; c--) targets.push(row * 8 + c);
+            for (let r = row + 1; r < 8; r++) targets.push(r * 8 + col);
+            for (let r = row - 1; r >= 0; r--) targets.push(r * 8 + col);
+            // Bishop-like moves
+            for (let dr of [-1, 1])
+              for (let dc of [-1, 1])
+                for (let i = 1; i < 8; i++) {
+                  const r = row + dr * i,
+                    c = col + dc * i;
+                  if (r >= 0 && r < 8 && c >= 0 && c < 8)
+                    targets.push(r * 8 + c);
+                  else break;
+                }
+            break;
+          case "king":
+            for (let dr = -1; dr <= 1; dr++)
+              for (let dc = -1; dc <= 1; dc++) {
+                if (dr === 0 && dc === 0) continue;
+                const r = row + dr,
+                  c = col + dc;
+                if (r >= 0 && r < 8 && c >= 0 && c < 8) targets.push(r * 8 + c);
+              }
+            break;
+        }
+        targets.forEach((idx) => squares[idx].classList.add("highlight"));
+        document.getElementById("pieceLabel").textContent =
+          PIECES[pieceKey].label +
+          ": " +
           {
             pawn: "Moves forward one square. Captures diagonally. Can move two squares from its starting position.",
             rook: "Moves any number of squares vertically or horizontally.",
-            knight: "Moves in an 'L' shape: two squares in one direction, then one square perpendicular.",
+            knight:
+              "Moves in an 'L' shape: two squares in one direction, then one square perpendicular.",
             bishop: "Moves diagonally any number of squares.",
             queen: "Moves like both a rook and a bishop.",
-            king: "Moves one square in any direction."
-          }[pieceKey]
-        );
-    }
+            king: "Moves one square in any direction.",
+          }[pieceKey];
+      }
 
-    // Set up piece buttons
-    document.getElementById('pawnBtn').onclick = () => showPieceMoves('pawn');
-    document.getElementById('rookBtn').onclick = () => showPieceMoves('rook');
-    document.getElementById('knightBtn').onclick = () => showPieceMoves('knight');
-    document.getElementById('bishopBtn').onclick = () => showPieceMoves('bishop');
-    document.getElementById('queenBtn').onclick = () => showPieceMoves('queen');
-    document.getElementById('kingBtn').onclick = () => showPieceMoves('king');
+      // Set up piece buttons
+      document.getElementById("pawnBtn").onclick = () => showPieceMoves("pawn");
+      document.getElementById("rookBtn").onclick = () => showPieceMoves("rook");
+      document.getElementById("knightBtn").onclick = () =>
+        showPieceMoves("knight");
+      document.getElementById("bishopBtn").onclick = () =>
+        showPieceMoves("bishop");
+      document.getElementById("queenBtn").onclick = () =>
+        showPieceMoves("queen");
+      document.getElementById("kingBtn").onclick = () => showPieceMoves("king");
 
-    // Show pawn by default
-    showPieceMoves('pawn');
-  </script>
-</body>
+      // Show pawn by default
+      showPieceMoves("pawn");
+    </script>
+  </body>
 </html>

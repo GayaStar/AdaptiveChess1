@@ -1,115 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>AdaptiveChess</title>
-  <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="index.css" />
-</head>
+    <title>AdaptiveChess</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <meta http-equiv="Cache-Control" content="no-store" />
 
-<body>
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <a href="homePage.html" class="brand">
-      <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" />
-      <span>Adaptive Chess</span>
-    </a>
-    <div class="navbar-menu" id="navbar-menu">
-      <!-- Content injected via JS -->
-    </div>
-  </nav>
+  <body>
+    <script>
+      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      if (!isLoggedIn) {
+        // Prevent access and go to homepage
+        window.location.replace("homePage.html");
+        alert("Please log in to play");
+      }
+    </script>
 
-  <!-- MAIN CONTAINER -->
-  <main class="container">
-    <!-- LEFT PANEL -->
-    <section class="left-panel">
-      <div class="board-wrapper">
-        <div class="rank-labels">
-          <span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <a href="homePage.html" class="brand">
+        <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" />
+        <span>Adaptive Chess</span>
+      </a>
+      <div class="navbar-menu" id="navbar-menu">
+        <!-- Content injected via JS -->
+      </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="game-layout">
+      <section class="board-section">
+        <div class="player-row top-player">
+          <span id="playerTopName">Agent (Black)</span>
+          <div id="capturedBlack" class="captured-pieces"></div>
         </div>
-        <div class="board-and-files">
-          <div id="myBoard"></div>
-          <div class="file-labels">
-            <span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span>
-          </div>
+
+        <div class="chessboard-area">
+          <div id="myBoard" class="board-centered"></div>
         </div>
-      </div>
-      <div class="game-controls">
-        <button id="startBtn">New Game</button>
-        <button id="undoBtn">Undo Move</button>
-        <button id="speakMoveBtn">🎙️ Speak Move</button>
-      </div>
-    </section>
 
-    <!-- RIGHT PANEL -->
-    <aside class="right-panel">
-      <div id="playerInfoPanel" class="side-panel hidden">
-        <h2>Player Information</h2>
-        <p>Your Rating: <span id="playerRating">1200</span></p>
-        <p>Stockfish Level: <span id="stockfishLevel">0</span></p>
-        <p>Stockfish Depth: <span id="stockfishDepth">5</span></p>
-      </div>
+        <div class="player-row bottom-player">
+          <div id="capturedWhite" class="captured-pieces"></div>
+          <span id="playerBottomName">You (White)</span>
+        </div>
 
-      <div class="side-panel">
+        <div class="game-controls">
+          <button id="startBtn">New Game</button>
+          <button id="undoBtn">Undo Move</button>
+          <button id="speakMoveBtn">🎙️ Speak Move</button>
+        </div>
+      </section>
+
+      <aside class="sidebar-panel">
         <h2>Game Status</h2>
         <p class="status" id="status">Choose your color to start</p>
         <div class="button-group">
-          <button id="playAsWhite">White</button>
-          <button id="playAsBlack">Black</button>
+          <button id="playAsWhite">Play as White</button>
+          <button id="playAsBlack">Play as Black</button>
         </div>
 
         <h2>Move History</h2>
-        <div id="move-list"></div>
+        <div id="move-list" class="move-list-box"></div>
 
-        <div class="analysis-controls">
-          <button id="analyzeBtn" class="hidden">Generate Analysis</button>
-          <div id="analysisResult" class="analysis-output"></div>
-        </div>
-      </div>
-    </aside>
-  </main>
+        <button id="analyzeBtn" class="hidden">Generate Analysis</button>
+        <div id="analysisResult" class="analysis-output"></div>
+      </aside>
+    </main>
 
-  <!-- SCRIPTS -->
-  <script>
-    function renderNavbar() {
-      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-      const username = localStorage.getItem("username") || "";
-      const nav = document.getElementById("navbar-menu");
-      nav.innerHTML = isLoggedIn
-        ? `
+    <!-- SCRIPTS -->
+    <script>
+      // Prevent back button from showing cached page
+      window.addEventListener("pageshow", function (event) {
+        if (event.persisted || window.performance.navigation.type === 2) {
+          window.location.reload();
+        }
+      });
+
+      function renderNavbar() {
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        const username = localStorage.getItem("username") || "";
+        const nav = document.getElementById("navbar-menu");
+        nav.innerHTML = isLoggedIn
+          ? `
           <a href="learn.html">Learn Chess</a>
           <a href="profile.html" class="nav-link">
-            <span class="profile-avatar">${username.charAt(0).toUpperCase()}</span> ${username}
+            <span class="profile-avatar">${username
+              .charAt(0)
+              .toUpperCase()}</span> ${username}
           </a>
           <button onclick="logout()">Logout</button>
         `
-        : `
+          : `
           <a class="nav-link" href="login.html">Login</a>
           <a class="nav-link" href="signup.html">Sign Up</a>
         `;
-    }
+      }
 
-    function logout() {
-      fetch("http://localhost:8080/logout", {
-        method: "POST",
-        credentials: "include",
-      }).then(() => {
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("username");
-        window.location.href = "login.html";
-      });
-    }
+      function logout() {
+        fetch("http://localhost:8080/logout", {
+          method: "POST",
+          credentials: "include",
+        }).then(() => {
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("username");
+          window.location.href = "homePage.html";
+        });
+      }
 
-    renderNavbar();
-  </script>
+      renderNavbar();
+    </script>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-  <script src="chessboardjs-themes.js"></script>
-  <script type="module" src="main.js"></script>
-</body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="chessboardjs-themes.js"></script>
+    <script type="module" src="main.js"></script>
+  </body>
 </html>

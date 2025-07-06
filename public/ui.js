@@ -16,6 +16,9 @@ import {
 import { updateStockfishLevel } from './stockfish.js';
 import { saveGameToDB } from './game.js';
 
+const capturedByWhite = [];
+const capturedByBlack = [];
+
 export function updateUI() {
   $('#playerRating').text(getPlayerRating());
   $('#stockfishLevel').text(getStockfishLevel());
@@ -134,6 +137,10 @@ function saveGameOnce() {
 export function updateMoveList() {
   const game = getGame();
   const history = game.history({ verbose: true });
+    // 🔁 Reset captured piece containers
+  document.getElementById('capturedWhite').innerHTML = '';
+  document.getElementById('capturedBlack').innerHTML = '';
+
   let html = '';
 
   for (let i = 0; i < history.length; i += 2) {
@@ -143,7 +150,11 @@ export function updateMoveList() {
     const blackMove = history[i + 1];
 
     const white = formatMove(whiteMove);
+    if (whiteMove) updateCapturedPieces(whiteMove);
+
     const black = blackMove ? formatMove(blackMove) : '';
+    if (blackMove) updateCapturedPieces(blackMove);
+
 
     html += `<div>${moveNum}. ${white} ${black}</div>`;
   }
@@ -213,4 +224,17 @@ function formatSANForSpeech(san) {
     .replace(/N/g, 'Knight ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+function updateCapturedPieces(move) {
+  if (!move || !move.captured) return;
+
+  const isWhite = move.color === 'w';
+  const containerId = isWhite ? 'capturedWhite' : 'capturedBlack';
+  const captured = move.captured.toUpperCase();
+  const prefix = isWhite ? 'b' : 'w';
+  const img = document.createElement('img');
+  img.src = `./pieces/${prefix}${captured}.png`;
+  img.alt = `${prefix}${captured}`;
+  document.getElementById(containerId).appendChild(img);
 }
