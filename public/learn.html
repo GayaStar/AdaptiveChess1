@@ -1,69 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Chess Piece Moves</title>
-    <style>
-      body {
-        font-family: sans-serif;
-        text-align: center;
-        padding: 1rem;
-        background-color: #f2f2f2;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <title>Learn Chess - Adaptive Chess</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="homePage.css" />
+  <style>
+    .board-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 2rem;
+    }
 
-      #board {
-        display: grid;
-        grid-template-columns: repeat(8, 60px);
-        grid-template-rows: repeat(8, 60px);
-        width: fit-content;
-        margin: 20px auto;
-        border: 2px solid #444;
-      }
+    #board, #speakBoard {
+      display: grid;
+      grid-template-columns: repeat(8, 60px);
+      grid-template-rows: repeat(8, 60px);
+      border-radius: 12px;
+      box-shadow: 0 0 40px #000a;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
 
-      .square {
-        width: 60px;
-        height: 60px;
-        line-height: 60px;
-        text-align: center;
-        font-size: 32px;
-        font-weight: bold;
-      }
+    .square {
+      width: 60px;
+      height: 60px;
+      line-height: 60px;
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      user-select: none;
+      transition: all 0.3s ease;
+    }
 
-      .light {
-        background-color: #fff;
-        color: black;
-      }
+    .light {
+      background: linear-gradient(145deg, #e8e8e8, #cfcfcf);
+      color: #222;
+    }
 
-      .dark {
-        background-color: #000;
-        color: white;
-      }
+    .dark {
+      background: linear-gradient(145deg, #3a3a4d, #2a2a3c);
+      color: #eee;
+    }
 
-      .highlight {
-        background-color: yellow !important;
-        color: black;
-      }
+    .highlight {
+      background: radial-gradient(circle, #facc15 0%, #facc1500 80%);
+      box-shadow: inset 0 0 10px #facc15aa, 0 0 12px #facc15aa;
+      transform: scale(1.05);
+      z-index: 2;
+    }
 
-      .controls {
-        margin-bottom: 1rem;
-      }
+    .controls {
+      margin: 1.5rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      justify-content: center;
+    }
 
-      button {
-        margin: 0.3rem;
-        padding: 0.5rem 1rem;
-        font-size: 16px;
-        cursor: pointer;
-      }
+    .controls button {
+      background: linear-gradient(120deg, #9f88ff, #5eead4);
+      border: none;
+      color: #181e23;
+      font-weight: bold;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0005;
+      transition: transform 0.15s ease;
+    }
 
-      #notationBox {
-        font-size: 1.1rem;
-        margin-top: 1rem;
-        color: #333;
-      }
-    </style>
-  </head>
-  <body>
-    <h2>Chess Piece Move Highlighter</h2>
+    .controls button:hover {
+      transform: scale(1.05);
+    }
+
+    #notationBox, #speechBox {
+      margin-top: 1.4rem;
+      font-size: 1.1rem;
+      color: #e5e6ff;
+      background: var(--glass, rgba(36, 41, 68, 0.54));
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 2px 12px #0006;
+      text-align: center;
+      max-width: 600px;
+    }
+
+    #speakSection {
+      margin-top: 3rem;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-animated"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="homePage.html" class="brand">
+      <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" alt="Chess Logo" />
+      <span>Adaptive Chess</span>
+    </a>
+    <div class="navbar-menu" id="navbar-menu"></div>
+  </nav>
+
+  <main class="board-container">
+    <h1 style="color: #facc15; text-shadow: 0 2px 10px #9f88ffaa;">Learn How Each Piece Moves</h1>
 
     <div class="controls">
       <button onclick="highlightMoves('pawn')">Pawn</button>
@@ -72,169 +119,214 @@
       <button onclick="highlightMoves('bishop')">Bishop</button>
       <button onclick="highlightMoves('queen')">Queen</button>
       <button onclick="highlightMoves('king')">King</button>
+      <button onclick="startSpeakMode()">🎙️ Learn How to Speak Move</button>
     </div>
 
     <div id="board"></div>
-    <div id="notationBox"></div>
+    <div id="notationBox">Click a piece to learn how it moves!</div>
 
-    <script>
-      const board = document.getElementById("board");
+    <!-- 👇 Speak move section -->
+    <div id="speakSection">
+      <h2 style="color: #9f88ff;">Speak a Move</h2>
+      <div id="speakBoard"></div>
+      <button onclick="listenForMove()">🎤 Start Listening</button>
+      <div id="speechBox">Say something like “Knight f3” or “Queen takes e5”</div>
+    </div>
+  </main>
 
-      // Create 8x8 board
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+  <script>
+    const board = document.getElementById("board");
+    const speakBoard = document.getElementById("speakBoard");
+    const game = new Chess();
+
+    // Setup initial 8x8 board
+    function createBoard(container) {
+      container.innerHTML = '';
       for (let i = 0; i < 64; i++) {
         const square = document.createElement("div");
-        square.className =
-          "square " + ((Math.floor(i / 8) + i) % 2 === 0 ? "light" : "dark");
+        square.className = "square " + ((Math.floor(i / 8) + i) % 2 === 0 ? "light" : "dark");
         square.dataset.index = i;
-        board.appendChild(square);
+        container.appendChild(square);
       }
+    }
 
-      function resetBoard() {
-        document.querySelectorAll(".square").forEach((sq) => {
-          sq.classList.remove("highlight");
-          sq.textContent = "";
-        });
-      }
+    createBoard(board);
 
-      function getPieceSymbol(piece, side) {
-        const symbols = {
-          white: {
-            pawn: "♙",
-            rook: "♖",
-            knight: "♘",
-            bishop: "♗",
-            queen: "♕",
-            king: "♔",
-          },
-          black: {
-            pawn: "♟",
-            rook: "♜",
-            knight: "♞",
-            bishop: "♝",
-            queen: "♛",
-            king: "♚",
-          },
-        };
-        return symbols[side][piece];
-      }
+    function resetBoard() {
+      document.querySelectorAll(".square").forEach((sq) => {
+        sq.classList.remove("highlight");
+        sq.textContent = "";
+      });
+    }
 
-      function highlightMoves(piece) {
-        resetBoard();
+    function getPieceSymbol(piece, side) {
+      const code = side[0] + piece[0].toUpperCase(); // e.g. wQ
+      const img = document.createElement("img");
+      img.src = `pieces/${code}.png`;
+      img.alt = code;
+      img.style.width = "40px";
+      img.style.height = "40px";
+      img.draggable = false;
+      return img;
+    }
 
-        const sides = ["white", "black"];
-        const side = sides[Math.floor(Math.random() * 2)];
+    function highlightMoves(piece) {
+      resetBoard();
+      const sides = ["white", "black"];
+      const side = sides[Math.floor(Math.random() * 2)];
+      const center = 27;
+      const squares = document.querySelectorAll("#board .square");
+      squares[center].appendChild(getPieceSymbol(piece, side));
 
-        const center = 27; // d4
-        const squares = document.querySelectorAll(".square");
-        squares[center].textContent = getPieceSymbol(piece, side);
+      const row = Math.floor(center / 8);
+      const col = center % 8;
+      let offsets = [];
 
-        const row = Math.floor(center / 8);
-        const col = center % 8;
-        let offsets = [];
-
-        switch (piece) {
-          case "pawn":
-            offsets = side === "white" ? [-8, -16] : [8, 16];
-            break;
-
-          case "rook":
-            for (let i = col + 1; i < 8; i++)
-              offsets.push(row * 8 + i - center);
-            for (let i = col - 1; i >= 0; i--)
-              offsets.push(row * 8 + i - center);
-            for (let i = row + 1; i < 8; i++)
-              offsets.push(i * 8 + col - center);
-            for (let i = row - 1; i >= 0; i--)
-              offsets.push(i * 8 + col - center);
-            break;
-
-          case "knight":
-            offsets = [-17, -15, -10, -6, 6, 10, 15, 17];
-            break;
-
-          case "bishop":
-            for (let dr = -1; dr <= 1; dr += 2) {
-              for (let dc = -1; dc <= 1; dc += 2) {
-                for (let i = 1; i < 8; i++) {
-                  const r = row + dr * i;
-                  const c = col + dc * i;
-                  if (r >= 0 && r < 8 && c >= 0 && c < 8) {
-                    offsets.push(r * 8 + c - center);
-                  } else break;
-                }
-              }
+      switch (piece) {
+        case "pawn": offsets = side === "white" ? [-8, -16] : [8, 16]; break;
+        case "rook":
+          for (let i = col + 1; i < 8; i++) offsets.push(row * 8 + i - center);
+          for (let i = col - 1; i >= 0; i--) offsets.push(row * 8 + i - center);
+          for (let i = row + 1; i < 8; i++) offsets.push(i * 8 + col - center);
+          for (let i = row - 1; i >= 0; i--) offsets.push(i * 8 + col - center);
+          break;
+        case "knight": offsets = [-17, -15, -10, -6, 6, 10, 15, 17]; break;
+        case "bishop":
+          for (let dr of [-1, 1]) for (let dc of [-1, 1])
+            for (let i = 1; i < 8; i++) {
+              const r = row + dr * i, c = col + dc * i;
+              if (r >= 0 && r < 8 && c >= 0 && c < 8) offsets.push(r * 8 + c - center);
+              else break;
             }
-            break;
+          break;
+        case "queen":
+          highlightMoves("rook");
+          highlightMoves("bishop");
+          return;
+        case "king": offsets = [-1, 1, -8, 8, -9, 9, -7, 7]; break;
+      }
 
-          case "queen":
-            for (let i = col + 1; i < 8; i++)
-              offsets.push(row * 8 + i - center);
-            for (let i = col - 1; i >= 0; i--)
-              offsets.push(row * 8 + i - center);
-            for (let i = row + 1; i < 8; i++)
-              offsets.push(i * 8 + col - center);
-            for (let i = row - 1; i >= 0; i--)
-              offsets.push(i * 8 + col - center);
-            for (let dr = -1; dr <= 1; dr += 2) {
-              for (let dc = -1; dc <= 1; dc += 2) {
-                for (let i = 1; i < 8; i++) {
-                  const r = row + dr * i;
-                  const c = col + dc * i;
-                  if (r >= 0 && r < 8 && c >= 0 && c < 8) {
-                    offsets.push(r * 8 + c - center);
-                  } else break;
-                }
-              }
-            }
-            break;
+      for (let offset of offsets) {
+        const target = center + offset;
+        if (target >= 0 && target < 64) squares[target]?.classList.add("highlight");
+      }
 
-          case "king":
-            offsets = [-1, 1, -8, 8, -9, 9, -7, 7];
-            break;
-        }
+      const moveExamples = {
+        pawn: { white: "e4, exd5, e8=Q", black: "d5, dxe4, d1=Q" },
+        rook: { white: "Re1, Rxe5, Rd8+", black: "Re8, Rxa4, Rh1#" },
+        knight: { white: "Nf3, Nxd4, Nc6+", black: "Nf6, Nxe4, Nd3+" },
+        bishop: { white: "Be3, Bxf6, Bg5+", black: "Bc5, Bxe4, Bh6" },
+        queen: { white: "Qh5, Qxe4+, Qd8#", black: "Qb6, Qxf2+, Qg1#" },
+        king: { white: "Kf2, Kxe1, O-O", black: "Kf7, Kxd8, O-O-O" }
+      };
 
-        for (let offset of offsets) {
-          const target = center + offset;
-          if (target >= 0 && target < 64) {
-            const square = squares[target];
-            if (square) square.classList.add("highlight");
+      const notationBox = document.getElementById("notationBox");
+      notationBox.innerHTML = '';
+      notationBox.appendChild(getPieceSymbol(piece, side));
+      notationBox.innerHTML += ` <strong>${moveExamples[piece][side]}</strong>`;
+    }
+
+    function startSpeakMode() {
+  const section = document.getElementById("speakSection");
+  section.style.display = "flex";
+  createBoard(speakBoard);
+  loadInitialPosition();
+  
+  // 👇 Smooth scroll into view
+  section.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+  setTimeout(() => {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  
+
+    function loadInitialPosition() {
+      const squares = speakBoard.querySelectorAll(".square");
+      game.reset();
+      squares.forEach(sq => sq.innerHTML = "");
+      const fen = game.fen();
+      const position = fen.split(" ")[0];
+      const rows = position.split("/");
+      rows.forEach((row, r) => {
+        let col = 0;
+        for (const char of row) {
+          if (isNaN(char)) {
+            const color = char === char.toUpperCase() ? 'w' : 'b';
+            const piece = char.toLowerCase();
+            const idx = r * 8 + col;
+            squares[idx].appendChild(getPieceSymbol(piece, color === 'w' ? 'white' : 'black'));
+            col++;
+          } else {
+            col += parseInt(char);
           }
         }
+      });
+    }
 
-        // Show move notation with side
-        const notationBox = document.getElementById("notationBox");
-        const moveExamples = {
-          pawn: {
-            white: "White Pawn moves: e4, exd5, e5+",
-            black: "Black Pawn moves: e5, exd4, e1=Q",
-          },
-          rook: {
-            white: "White Rook moves: Re1, Rxe5, Rd8+",
-            black: "Black Rook moves: ...Re8, Rxa4, Rh1#",
-          },
-          knight: {
-            white: "White Knight moves: Nf3, Nxd4, Nc6+",
-            black: "Black Knight moves: Nf6, Nxe4, Nd3+",
-          },
-          bishop: {
-            white: "White Bishop moves: Be3, Bxf6, Bg5+",
-            black: "Black Bishop moves: Bc5, Bxe4, Bh6",
-          },
-          queen: {
-            white: "White Queen moves: Qh5, Qxe4+, Qd8#",
-            black: "Black Queen moves: Qb6, Qxf2+, Qg1#",
-          },
-          king: {
-            white: "White King moves: Kf2, Kxe1, O-O",
-            black: "Black King moves: Kf7, Kxd8, O-O-O",
-          },
-        };
+    function listenForMove() {
+      const speechBox = document.getElementById("speechBox");
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
 
-        const symbol = getPieceSymbol(piece, side);
-        const desc = moveExamples[piece][side];
+      recognition.onresult = function (event) {
+        const spoken = event.results[0][0].transcript;
+        speechBox.innerHTML = `🗣️ You said: <strong>${spoken}</strong><br/>`;
 
-        notationBox.innerHTML = `<strong>${symbol} ${desc}</strong>`;
-      }
-    </script>
-  </body>
+        try {
+          const move = game.move(spoken, { sloppy: true });
+          if (move) {
+            loadInitialPosition();
+            const from = move.from;
+            const to = move.to;
+            const idxFrom = 8 * (8 - parseInt(from[1])) + (from.charCodeAt(0) - 97);
+            const idxTo = 8 * (8 - parseInt(to[1])) + (to.charCodeAt(0) - 97);
+            const squares = speakBoard.querySelectorAll(".square");
+            squares[idxFrom].classList.add("highlight");
+            squares[idxTo].classList.add("highlight");
+            speechBox.innerHTML += `✅ Move recognized: <strong>${move.san}</strong>`;
+          } else {
+            speechBox.innerHTML += "❌ Invalid move.";
+          }
+        } catch (e) {
+          speechBox.innerHTML += "❌ Couldn't interpret move.";
+        }
+      };
+
+      recognition.onerror = function (err) {
+        speechBox.innerHTML = `⚠️ Error: ${err.error}`;
+      };
+
+      recognition.start();
+      speechBox.innerHTML = "🎤 Listening...";
+    }
+
+    // Navbar logic
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const username = localStorage.getItem("username") || "";
+    document.getElementById("navbar-menu").innerHTML = isLoggedIn
+      ? `
+        <a href="index.html" class="nav-link">Play Chess</a>
+        <a href="learn.html" class="nav-link">Learn Chess</a>
+        <a href="speakNotation.html" class="nav-link">Speak Moves</a>
+        <a href="profile.html" class="nav-link">
+          <span class="profile-avatar">${username.charAt(0).toUpperCase()}</span> ${username}
+        </a>
+        <button class="nav-btn" onclick="logout()">Logout</button>
+      `
+      : `
+        <a class="nav-link" href="login.html">Login</a>
+        <a class="nav-link" href="signup.html">Sign Up</a>
+      `;
+
+    function logout() {
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("username");
+      location.reload();
+    }
+  </script>
+</body>
 </html>

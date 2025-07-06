@@ -135,14 +135,41 @@ export function updateMoveList() {
   const game = getGame();
   const history = game.history({ verbose: true });
   let html = '';
+
   for (let i = 0; i < history.length; i += 2) {
-    const moveNum = (i / 2) + 1;
-    const whiteMove = history[i] ? history[i].san : '';
-    const blackMove = history[i + 1] ? history[i + 1].san : '';
-    html += `<div>${moveNum}. ${whiteMove} ${blackMove}</div>`;
+    const moveNum = Math.floor(i / 2) + 1;
+
+    const whiteMove = history[i];
+    const blackMove = history[i + 1];
+
+    const white = formatMove(whiteMove);
+    const black = blackMove ? formatMove(blackMove) : '';
+
+    html += `<div>${moveNum}. ${white} ${black}</div>`;
   }
+
   $('#move-list').html(html);
 }
+
+function formatMove(move) {
+  if (!move) return '';
+  let captureImage = '';
+
+  if (move.captured) {
+    const isWhite = move.color === 'w';
+    const capturedPiece = move.captured.toUpperCase(); // 'P', 'Q', etc.
+    const prefix = isWhite ? 'b' : 'w'; // captured piece color (opposite of the mover)
+    const pieceKey = `${prefix}${capturedPiece}`; // e.g., 'bP' or 'wQ'
+
+    // Assuming images are inside ./pieces/ directory as bP.png, wQ.png etc.
+    const pieceImageURL = `./pieces/${pieceKey}.png`;
+
+    captureImage = ` <img src="${pieceImageURL}" alt="${pieceKey}" style="width:18px; height:18px; vertical-align:middle;" />`;
+  }
+
+  return `${move.san}${captureImage}`;
+}
+
 
 export function updateRatingRL() {
   const game = getGame();

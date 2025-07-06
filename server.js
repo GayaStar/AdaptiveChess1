@@ -210,5 +210,5 @@ app.get('/user_games', requireAuth, async (req, res) => {
 // Server setup
 const server = http.createServer(app);
 server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/login.html`);
+  console.log(`Server running at http://localhost:${PORT}/homePage.html`);
 });
