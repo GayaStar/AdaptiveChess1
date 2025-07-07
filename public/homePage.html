@@ -10,7 +10,7 @@
 <body>
     <div class="bg-animated"></div>
     <nav class="navbar">
-        <a href="homePage.html" class="brand">
+        <a href="/homePage" class="brand">
             <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" alt="Chess Logo"/>
             <span>Adaptive Chess</span>
         </a>
@@ -35,7 +35,7 @@
                 </div>
                 <div class="action-title">Play Chess</div>
                 <div class="action-desc">Face smarter AI every game and track your progress.</div>
-                <a href="index.html" class="action-link">Start Playing</a>
+                <a href="/play" class="action-link">Start Playing</a>
             </div>
             <div class="action-card" onclick="goToLearn()">
                 <div class="action-icon action-icon-learn">
@@ -43,7 +43,7 @@
                 </div>
                 <div class="action-title">Learn Chess</div>
                 <div class="action-desc">See how each piece moves and master chess notation.</div>
-                <a href="learn.html" class="action-link">Start Learning</a>
+                <a href="/learn" class="action-link">Start Learning</a>
             </div>
         </section>
         <section class="features-section">
@@ -81,14 +81,14 @@
             nav.innerHTML = "";
             if (!isLoggedIn) {
                 nav.innerHTML = `
-                    <a class="nav-link" href="login.html">Login</a>
-                    <a class="nav-link" href="signup.html">Sign Up</a>
+                    <a class="nav-link" href="/login">Login</a>
+                    <a class="nav-link" href="/signup">Sign Up</a>
                 `;
             } else {
                 nav.innerHTML = `
-                    <a class="nav-link" href="index.html">Play Chess</a>
-                    <a class="nav-link" href="learn.html">Learn Chess</a>
-                    <a class="nav-link" href="profile.html">
+                    <a class="nav-link" href="/play">Play Chess</a>
+                    <a class="nav-link" href="/learn">Learn Chess</a>
+                    <a class="nav-link" href="/profile">
                         <span class="profile-avatar">${username.charAt(0).toUpperCase()}</span> ${username || "Profile"}
                     </a>
                     <button class="nav-btn" onclick="logout()">Logout</button>
@@ -98,7 +98,7 @@
         function logout() {
             localStorage.removeItem("isLoggedIn");
             localStorage.removeItem("username");
-                window.location.href = "homePage.html"; // Explicit redirect
+                window.location.href = "/homePage"; // Explicit redirect
 
         }
       window.addEventListener("pageshow", function () {
@@ -106,10 +106,10 @@
 });
 
         function goToPlay() {
-            window.location.href = 'index.html';
+            window.location.href = '/play.';
         }
         function goToLearn() {
-            window.location.href = 'learn.html';
+            window.location.href = '/learn';
         }
     </script>
 </body>

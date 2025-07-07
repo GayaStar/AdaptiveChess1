@@ -10,33 +10,40 @@
 </head>
 <body>
   <nav class="navbar">
-      <a href="homePage.html" class="brand">
-          <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" alt="Chess Logo"/>
-          <span>Adaptive Chess</span>
-      </a>
-      <div class="navbar-menu" id="navbar-menu"></div>
+    <a href="/homePage" class="brand">
+      <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" alt="Chess Logo"/>
+      <span>Adaptive Chess</span>
+    </a>
+    <div class="navbar-menu" id="navbar-menu"></div>
   </nav>
+
   <main>
     <section class="profile-header">
       <div class="profile-info">
-        <div class="avatar" id="avatar"></div>
+        <div class="avatar" id="avatar"><span id="avatar-letter"></span></div>
         <div>
           <h2 id="username">Player</h2>
           <div>Rating: <span id="rating">-</span></div>
           <div>Games Played: <span id="games-played">-</span></div>
         </div>
       </div>
+      <div class="text-white mt-4" id="gameStats" style="display:none">
+        <p><strong>Games Won:</strong> <span id="gamesWon"></span></p>
+        <p><strong>Games Lost:</strong> <span id="gamesLost"></span></p>
+        <p><strong>Games Drawn:</strong> <span id="gamesDrawn"></span></p>
+      </div>
       <div class="profile-graph">
         <canvas id="ratingChart" width="420" height="210"></canvas>
       </div>
     </section>
+
     <section class="recent-games">
       <h3>Last 2 Games</h3>
       <div id="games-list"></div>
     </section>
   </main>
+
   <script>
-    // Navbar logic (reuse your navbar JS)
     function renderNavbar() {
       const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
       const username = localStorage.getItem("username") || "";
@@ -44,30 +51,31 @@
       nav.innerHTML = "";
       if (!isLoggedIn) {
         nav.innerHTML = `
-            <a class="nav-link" href="login.html">Login</a>
-            <a class="nav-link" href="signup.html">Sign Up</a>
+            <a class="nav-link" href="/login">Login</a>
+            <a class="nav-link" href="/signup">Sign Up</a>
         `;
       } else {
         nav.innerHTML = `
-            <a class="nav-link" href="index.html">Play Chess</a>
-            <a class="nav-link" href="learn.html">Learn Chess</a>
-            <a class="nav-link" href="profile.html">
+            <a class="nav-link" href="/play">Play Chess</a>
+            <a class="nav-link" href="/learn">Learn Chess</a>
+            <a class="nav-link" href="/profile">
                 <span class="profile-avatar">${username.charAt(0).toUpperCase()}</span> ${username || "Profile"}
             </a>
             <button class="nav-btn" onclick="logout()">Logout</button>
         `;
       }
     }
+
     function logout() {
       localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("username");
-      window.location.replace("homePage.html");
-
-
+      window.location.replace("/homePage");
     }
+
     renderNavbar();
 
-    // Fetch profile data from server
+    let chartInstance;
+
     async function fetchProfile() {
       try {
         const [userRes, gamesRes] = await Promise.all([
@@ -79,39 +87,56 @@
 
         // Display user info
         document.getElementById('username').textContent = userData.username;
-        document.getElementById('avatar').textContent = userData.username.charAt(0).toUpperCase();
+        document.getElementById('avatar-letter').textContent = userData.username.charAt(0).toUpperCase();
         document.getElementById('rating').textContent = userData.rating;
         document.getElementById('games-played').textContent = gamesData.total || 0;
 
-        // Show chart
+        // Show game stats
+        if (gamesData.total > 0) {
+          document.getElementById("gamesWon").textContent = gamesData.wins;
+          document.getElementById("gamesLost").textContent = gamesData.losses;
+          document.getElementById("gamesDrawn").textContent = gamesData.draws;
+          document.getElementById("gameStats").style.display = "block";
+        }
+
+        // Chart
         const ratingHistory = gamesData.ratings || [];
         const timestamps = gamesData.timestamps || [];
         const ctx = document.getElementById('ratingChart').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: timestamps.map(t => new Date(t).toLocaleDateString()),
-            datasets: [{
-              label: 'Rating',
-              data: ratingHistory,
-              borderColor: '#9f88ff',
-              backgroundColor: 'rgba(159,136,255,0.15)',
-              tension: 0.2,
-              pointBackgroundColor: "#5eead4",
-              pointRadius: 5
-            }]
-          },
-          options: {
-            scales: {
-              x: { title: { display: false } },
-              y: { title: { display: false }, beginAtZero: false }
+
+        if (chartInstance) {
+          chartInstance.destroy();
+        }
+
+        if (ratingHistory.length > 0) {
+          chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: timestamps.map(t => new Date(t).toLocaleDateString()),
+              datasets: [{
+                label: 'Rating',
+                data: ratingHistory,
+                borderColor: '#9f88ff',
+                backgroundColor: 'rgba(159,136,255,0.15)',
+                tension: 0.2,
+                pointBackgroundColor: "#5eead4",
+                pointRadius: 5
+              }]
             },
-            plugins: {
-              legend: { display: false }
-            },
-            responsive: true
-          }
-        });
+            options: {
+              scales: {
+                x: { title: { display: false } },
+                y: { title: { display: false }, beginAtZero: false }
+              },
+              plugins: {
+                legend: { display: false }
+              },
+              responsive: true
+            }
+          });
+        } else {
+          document.querySelector(".profile-graph").innerHTML = "<em>No rating history yet.</em>";
+        }
 
         // Last 2 games
         const gamesList = document.getElementById('games-list');
@@ -130,27 +155,29 @@
         } else {
           gamesList.innerHTML = '<em>No games played yet.</em>';
         }
+
       } catch (e) {
         document.getElementById('username').textContent = "Error loading profile";
       }
     }
+
     fetchProfile();
   </script>
+
   <script>
-  // Prevent showing cached profile after logout
-  window.addEventListener("pageshow", function (event) {
-    if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
-      if (!localStorage.getItem("isLoggedIn")) {
-        window.location.replace("homePage.html");
+    // Prevent showing cached profile after logout
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+        if (!localStorage.getItem("isLoggedIn")) {
+          window.location.replace("/homePage");
+        }
       }
+    });
+
+    // Redirect if not logged in
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+      window.location.replace("/homePage");
     }
-  });
-
-  // Redirect if not logged in
-  if (localStorage.getItem("isLoggedIn") !== "true") {
-    window.location.replace("homePage.html");
-  }
-</script>
-
+  </script>
 </body>
 </html>

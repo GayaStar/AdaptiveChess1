@@ -238,7 +238,7 @@
         <div id="login-status"></div>
         <div class="login-bottom-link">
           Don't have an account?
-          <a href="signup.html">Sign up here</a>
+          <a href="/signup">Sign up here</a>
         </div>
       </form>
     </div>
@@ -258,7 +258,7 @@
             if (data.msg === "Login successful") {
               localStorage.setItem("isLoggedIn", "true");
               localStorage.setItem("username", username);
-              window.location.href = "homePage.html";
+              window.location.href = "/homePage";
             } else {
               document.getElementById("login-status").innerText = data.msg;
             }

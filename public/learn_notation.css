@@ -1,0 +1,278 @@
+        body {
+            min-height: 100vh;
+            background: var(--primary);
+        }
+
+        .learn-container {
+            max-width: 1000px;
+            margin: 2.5rem auto;
+            padding: 2rem 1.5rem;
+            background: var(--glass, rgba(36, 41, 68, 0.54));
+            border-radius: 22px;
+            box-shadow: 0 8px 36px 0 #0008, 0 1.5px 12px 0 #9f88ff44;
+            position: relative;
+        }
+
+        .chapter-nav {
+            display: flex;
+            gap: 1.4rem;
+            margin-bottom: 2.6rem;
+            justify-content: center;
+        }
+
+        .chapter-btn {
+            background: linear-gradient(90deg, #9f88ff 60%, #5eead4 100%);
+            color: #181e23;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.04rem;
+            font-weight: bold;
+            padding: 0.7em 1.5em;
+            cursor: pointer;
+            margin: 0 0.2em;
+            box-shadow: 0 2px 12px #5eead433;
+            outline: none;
+            transition: background 0.2s, color 0.2s;
+            opacity: 0.7;
+        }
+
+        .chapter-btn.active {
+            background: linear-gradient(90deg, #facc15 60%, #9f88ff 100%);
+            color: #181e23;
+            opacity: 1;
+            box-shadow: 0 2px 12px #facc1566;
+        }
+
+        .learn-title {
+            font-size: 2rem;
+            color: var(--violet);
+            font-family: Georgia, serif;
+            text-align: center;
+            margin-bottom: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 0.01em;
+            text-shadow: 0 2px 12px #9f88ffaa;
+        }
+
+        .learn-desc {
+            text-align: center;
+            color: #e5e6ff;
+            font-size: 1.12rem;
+            margin-bottom: 2.1rem;
+        }
+
+        .notation-piece-btns {
+            display: flex;
+            gap: 1.1rem;
+            margin-bottom: 1.6rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .notation-piece-btn {
+            background: #22223a;
+            color: #fff;
+            border: 2px solid #5eead4;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: background 0.18s, border 0.18s, box-shadow 0.18s;
+            box-shadow: 0 2px 8px #5eead455;
+            padding: 0;
+        }
+
+        .notation-piece-btn img {
+            width: 70%;
+            height: 70%;
+            object-fit: contain;
+            pointer-events: none;
+            user-select: none;
+            display: block;
+            margin: auto;
+        }
+
+        .notation-piece-btn.active,
+        .notation-piece-btn:hover {
+            background: #5eead4;
+            color: #181e23;
+            border: 2.5px solid #9f88ff;
+            box-shadow: 0 2px 18px #facc1566;
+        }
+
+        .notation-board-wrap {
+            margin-bottom: 1.4rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        #notationBoard {
+            display: grid;
+            grid-template-columns: repeat(8, 48px);
+            grid-template-rows: repeat(8, 48px);
+            border-radius: 10px;
+            box-shadow: none !important;
+            border: none !important;
+            background: transparent !important;
+            overflow: hidden;
+        }
+
+        .notation-square {
+            width: 48px;
+            height: 48px;
+            line-height: 48px;
+            text-align: center;
+            font-size: 1.45rem;
+            font-weight: 700;
+            user-select: none;
+            transition: background 0.18s, box-shadow 0.2s, transform 0.14s;
+            border: none !important;
+            box-shadow: none !important;
+            background-clip: padding-box;
+            padding: 0;
+        }
+
+        .notation-square img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            display: block;
+            margin: auto;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .light {
+            background: #e5e6ff;
+            color: #222;
+        }
+
+        .dark {
+            background: #3a3a4d;
+            color: #eee;
+        }
+
+        .highlight {
+            background: radial-gradient(circle, #facc15 0%, #facc1500 80%);
+            box-shadow: inset 0 0 10px #facc15aa, 0 0 12px #facc15aa;
+            transform: scale(1.08);
+            z-index: 2;
+            border-radius: 6px;
+        }
+
+        .notation-label {
+            font-weight: bold;
+            font-size: 1.08rem;
+            margin-bottom: 0.6rem;
+            color: #facc15;
+            text-align: center;
+            letter-spacing: 0.01em;
+        }
+
+        .notation-box {
+            background: var(--glass, rgba(36, 41, 68, 0.54));
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            text-align: center;
+            font-size: 1.18rem;
+            color: #e5e6ff;
+            margin-bottom: 0.8rem;
+            box-shadow: none !important;
+            max-width: 540px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 0.7rem;
+        }
+
+        .notation-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1.1rem;
+            margin-top: 1.2rem;
+        }
+
+        .notation-controls button {
+            background: linear-gradient(90deg, #9f88ff 60%, #5eead4 100%);
+            color: #181e23;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.06rem;
+            font-weight: 700;
+            padding: 0.5em 1.4em;
+            cursor: pointer;
+            box-shadow: none !important;
+            transition: background 0.18s, color 0.18s;
+        }
+
+        .notation-controls button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 700px) {
+            #notationBoard {
+                grid-template-columns: repeat(8, 36px);
+                grid-template-rows: repeat(8, 36px);
+            }
+
+            .notation-square {
+                width: 36px;
+                height: 36px;
+                font-size: 1.1rem;
+            }
+
+            .notation-square img {
+                width: 80%;
+                height: 80%;
+            }
+
+            .notation-piece-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1.3rem;
+            }
+
+            .notation-piece-btn img {
+                width: 70%;
+                height: 70%;
+            }
+        }
+
+        .board-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .col-labels {
+            display: grid;
+            grid-template-columns: repeat(8, 48px);
+            gap: 0;
+            margin-bottom: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #facc15;
+            text-align: center;
+        }
+
+        .row-with-labels {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .row-labels {
+            display: grid;
+            grid-template-rows: repeat(8, 48px);
+            gap: 0;
+            margin-right: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #facc15;
+            text-align: center;
+            line-height: 48px;
+        }

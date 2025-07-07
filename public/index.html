@@ -22,14 +22,14 @@
       const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
       if (!isLoggedIn) {
         // Prevent access and go to homepage
-        window.location.replace("homePage.html");
+        window.location.replace("/homePage");
         alert("Please log in to play");
       }
     </script>
 
     <!-- NAVBAR -->
     <nav class="navbar">
-      <a href="homePage.html" class="brand">
+      <a href="/homePage" class="brand">
         <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" />
         <span>Adaptive Chess</span>
       </a>
@@ -93,8 +93,8 @@
         const nav = document.getElementById("navbar-menu");
         nav.innerHTML = isLoggedIn
           ? `
-          <a href="learn.html">Learn Chess</a>
-          <a href="profile.html" class="nav-link">
+          <a href="learn">Learn Chess</a>
+          <a href="profile" class="nav-link">
             <span class="profile-avatar">${username
               .charAt(0)
               .toUpperCase()}</span> ${username}
@@ -102,8 +102,8 @@
           <button onclick="logout()">Logout</button>
         `
           : `
-          <a class="nav-link" href="login.html">Login</a>
-          <a class="nav-link" href="signup.html">Sign Up</a>
+          <a class="nav-link" href="/login">Login</a>
+          <a class="nav-link" href="/signup">Sign Up</a>
         `;
       }
 
@@ -114,7 +114,7 @@
         }).then(() => {
           localStorage.removeItem("isLoggedIn");
           localStorage.removeItem("username");
-          window.location.href = "homePage.html";
+          window.location.href = "/homePage";
         });
       }
 
