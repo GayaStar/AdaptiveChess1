@@ -290,6 +290,16 @@
 </head>
 
 <body>
+      <script>
+      // Redirect unauthenticated users
+      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      if (!isLoggedIn) {
+        window.location.replace("homePage.html");
+        alert("Please log in to learn how to play");
+  
+      }
+    </script>
+
     <div class="bg-animated"></div>
     <nav class="navbar">
         <a href="homePage.html" class="brand">
@@ -377,12 +387,13 @@
             `;
             }
         }
-        function logout() {
-            localStorage.removeItem("isLoggedIn");
-            localStorage.removeItem("username");
-            location.reload();
-        }
-        renderNavbar();
+     function logout() {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("username");
+        sessionStorage.clear(); // optional: clear anything else
+        window.location.replace("homePage.html"); // replaces current history entry
+      }
+      renderNavbar();
 
         const PIECE_IMG = {
             wP: 'pieces/wP.png', wR: 'pieces/wR.png', wN: 'pieces/wN.png', wB: 'pieces/wB.png',
