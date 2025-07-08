@@ -42,7 +42,7 @@
     <main class="game-layout">
       <section class="board-section">
         <div class="player-row top-player">
-          <span id="playerTopName">Agent (Black)</span>
+          <span id="playerTopName">Agent</span>
           <div id="capturedBlack" class="captured-pieces"></div>
         </div>
 
@@ -52,7 +52,8 @@
 
         <div class="player-row bottom-player">
           <div id="capturedWhite" class="captured-pieces"></div>
-          <span id="playerBottomName">You (White)</span>
+         <div id="playerBottomName" class="player-name">Loading...</div>
+
         </div>
 
         <div class="game-controls">
@@ -108,7 +109,7 @@
       }
 
       function logout() {
-        fetch("http://localhost:8080/logout", {
+        fetch("http://localhost:8081/logout", {
           method: "POST",
           credentials: "include",
         }).then(() => {
@@ -117,6 +118,22 @@
           window.location.href = "/homePage";
         });
       }
+  // Fetch the logged-in user's name from the server
+  fetch('/user', {
+    credentials: 'include'
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Not authenticated');
+    return response.json();
+  })
+  .then(data => {
+    const username = data.username;
+    document.getElementById("playerBottomName").textContent = `${username}`;
+  })
+  .catch(err => {
+    console.error("Failed to load user:", err);
+    document.getElementById("playerBottomName").textContent = "Guest";
+  });
 
       renderNavbar();
     </script>
