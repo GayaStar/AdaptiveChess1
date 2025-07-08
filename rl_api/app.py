@@ -16,7 +16,7 @@ CORS(
     supports_credentials=True,
     resources={
         r"/*": {
-            "origins": "http://localhost:8080",
+            "origins": ["http://localhost:8081","http://localhost:8080"],
             "methods": ["POST", "OPTIONS"],
             "allow_headers": ["Content-Type"],
         }
