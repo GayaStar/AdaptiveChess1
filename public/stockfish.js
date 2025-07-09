@@ -59,10 +59,17 @@ export function updateStockfishLevel(level, shouldUpdateUI = true) {
 export function makeStockfishMove() {
     const game = getGame();
     const stockfish = getStockfish();
+
+    if (!stockfish) {
+        console.warn('Stockfish is not initialized yet.');
+        return;
+    }
+
     if (game.game_over()) {
         stockfish.postMessage('stop');
         return;
     }
+
     setStockfishThinking(true);
     stockfish.postMessage('ucinewgame');
     stockfish.postMessage(`position fen ${game.fen()}`);
