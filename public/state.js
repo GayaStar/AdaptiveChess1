@@ -8,8 +8,15 @@ let stockfishLevel = 0;
 let stockfishDepth = 5;
 let gameEnded = false;
 let gameSaved = false;
-const API = 'http://localhost:8080';
+const API = 'http://localhost:8081';
 
+// 🧠 RL Agent flag
+let rlGame = false;
+
+// 🧑‍💻 User info
+let userId = null;
+
+// ==== Game and Board Access ====
 export function getGame() { return gameInstance; }
 export function setGame(game) { gameInstance = game; }
 
@@ -19,6 +26,7 @@ export function setBoard(board) { boardInstance = board; }
 export function getStockfish() { return stockfishInstance; }
 export function setStockfish(worker) { stockfishInstance = worker; }
 
+// ==== Player and Turn ====
 export function getPlayerColor() { return playerColor; }
 export function setPlayerColor(color) { playerColor = color; }
 
@@ -42,13 +50,10 @@ export function setGameSaved(status) { gameSaved = status; }
 
 export function getApiUrl() { return API; }
 
-// ✅ RL Agent support (user-specific)
-let userId = null;
+// ==== RL Agent Game Mode ====
+export function isRLGame() { return rlGame; }
+export function setIsRLGame(value) { rlGame = value; }
 
-export function setUserId(id) {
-  userId = id;
-}
-
-export function getUserId() {
-  return userId;
-}
+// ==== User Identification ====
+export function setUserId(id) { userId = id; }
+export function getUserId() { return userId; }

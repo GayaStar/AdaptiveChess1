@@ -1,147 +1,131 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AdaptiveChess</title>
+  <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<meta http-equiv="Cache-Control" content="no-store" />
 
-    <title>AdaptiveChess</title>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="index.css" />
-  </head>
-  <meta http-equiv="Cache-Control" content="no-store" />
+<body>
+  <script>
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (!isLoggedIn) {
+      window.location.replace("/homePage");
+      alert("Please log in to play");
+    }
+  </script>
 
-  <body>
-    <script>
-      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-      if (!isLoggedIn) {
-        // Prevent access and go to homepage
-        window.location.replace("/homePage");
-        alert("Please log in to play");
-      }
-    </script>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="/homePage" class="brand">
+      <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" />
+      <span>Adaptive Chess</span>
+    </a>
+    <div class="navbar-menu" id="navbar-menu"></div>
+  </nav>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-      <a href="/homePage" class="brand">
-        <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" />
-        <span>Adaptive Chess</span>
-      </a>
-      <div class="navbar-menu" id="navbar-menu">
-        <!-- Content injected via JS -->
+  <!-- MAIN CONTAINER -->
+  <main class="game-layout">
+    <section class="board-section">
+      <div class="player-row top-player">
+        <span id="playerTopName">Agent</span>
+        <div id="capturedBlack" class="captured-pieces"></div>
       </div>
-    </nav>
 
-    <!-- MAIN CONTAINER -->
-    <main class="game-layout">
-      <section class="board-section">
-        <div class="player-row top-player">
-          <span id="playerTopName">Agent</span>
-          <div id="capturedBlack" class="captured-pieces"></div>
-        </div>
+      <div class="chessboard-area">
+        <div id="myBoard" class="board-centered"></div>
+        <div id="promotionOverlay" class="hidden center-ribbon"></div>
+      </div>
 
-        <div class="chessboard-area">
-          <div id="myBoard" class="board-centered"></div>
-        </div>
+      <div class="player-row bottom-player">
+        <div id="capturedWhite" class="captured-pieces"></div>
+        <div id="playerBottomName" class="player-name">Loading...</div>
+      </div>
 
-        <div class="player-row bottom-player">
-          <div id="capturedWhite" class="captured-pieces"></div>
-         <div id="playerBottomName" class="player-name">Loading...</div>
+      <div class="game-controls">
+        <button id="startBtn">New Game</button>
+        <button id="undoBtn">Undo Move</button>
+        <button id="speakMoveBtn">🎙️ Speak Move</button>
+      </div>
+    </section>
 
-        </div>
+    <aside class="sidebar-panel">
+      <h2>Game Status</h2>
+      <p class="status" id="status">Choose your color to start</p>
+      <div class="button-group">
+        <button id="playAsWhite">Play as White</button>
+        <button id="playAsBlack">Play as Black</button>
+      </div>
 
-        <div class="game-controls">
-          <button id="startBtn">New Game</button>
-          <button id="undoBtn">Undo Move</button>
-          <button id="speakMoveBtn">🎙️ Speak Move</button>
-        </div>
-      </section>
+      <h2>Move History</h2>
+      <div id="move-list" class="move-list-box"></div>
 
-      <aside class="sidebar-panel">
-        <h2>Game Status</h2>
-        <p class="status" id="status">Choose your color to start</p>
-        <div class="button-group">
-          <button id="playAsWhite">Play as White</button>
-          <button id="playAsBlack">Play as Black</button>
-        </div>
+      <button id="analyzeBtn" class="hidden">Generate Analysis</button>
+      <div id="analysisResult" class="analysis-output hidden"></div>
+    </aside>
+  </main>
 
-        <h2>Move History</h2>
-        <div id="move-list" class="move-list-box"></div>
+  <!-- SCRIPTS -->
+  <script>
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted || window.performance.navigation.type === 2) {
+        window.location.reload();
+      }
+    });
 
-        <button id="analyzeBtn" class="hidden">Generate Analysis</button>
-        <div id="analysisResult" class="analysis-output"></div>
-      </aside>
-    </main>
-
-    <!-- SCRIPTS -->
-    <script>
-      // Prevent back button from showing cached page
-      window.addEventListener("pageshow", function (event) {
-        if (event.persisted || window.performance.navigation.type === 2) {
-          window.location.reload();
-        }
-      });
-
-      function renderNavbar() {
-        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-        const username = localStorage.getItem("username") || "";
-        const nav = document.getElementById("navbar-menu");
-        nav.innerHTML = isLoggedIn
-          ? `
+    function renderNavbar() {
+      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      const username = localStorage.getItem("username") || "";
+      const nav = document.getElementById("navbar-menu");
+      nav.innerHTML = isLoggedIn
+        ? `
           <a href="learn">Learn Chess</a>
           <a href="profile" class="nav-link">
-            <span class="profile-avatar">${username
-              .charAt(0)
-              .toUpperCase()}</span> ${username}
+            <span class="profile-avatar">${username.charAt(0).toUpperCase()}</span> ${username}
           </a>
           <button onclick="logout()">Logout</button>
         `
-          : `
+        : `
           <a class="nav-link" href="/login">Login</a>
           <a class="nav-link" href="/signup">Sign Up</a>
         `;
-      }
+    }
 
-      function logout() {
-        fetch("http://localhost:8081/logout", {
-          method: "POST",
-          credentials: "include",
-        }).then(() => {
-          localStorage.removeItem("isLoggedIn");
-          localStorage.removeItem("username");
-          window.location.href = "/homePage";
-        });
-      }
-  // Fetch the logged-in user's name from the server
-  fetch('/user', {
-    credentials: 'include'
-  })
-  .then(response => {
-    if (!response.ok) throw new Error('Not authenticated');
-    return response.json();
-  })
-  .then(data => {
-    const username = data.username;
-    document.getElementById("playerBottomName").textContent = `${username}`;
-  })
-  .catch(err => {
-    console.error("Failed to load user:", err);
-    document.getElementById("playerBottomName").textContent = "Guest";
-  });
+    function logout() {
+      fetch("http://localhost:8081/logout", {
+        method: "POST",
+        credentials: "include",
+      }).then(() => {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("username");
+        window.location.href = "/homePage";
+      });
+    }
 
-      renderNavbar();
-    </script>
+    fetch('/user', { credentials: 'include' })
+      .then(response => {
+        if (!response.ok) throw new Error('Not authenticated');
+        return response.json();
+      })
+      .then(data => {
+        document.getElementById("playerBottomName").textContent = data.username;
+      })
+      .catch(() => {
+        document.getElementById("playerBottomName").textContent = "Guest";
+      });
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-    <script src="chessboardjs-themes.js"></script>
-    <script type="module" src="main.js"></script>
-  </body>
+    renderNavbar();
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+  <script src="chessboardjs-themes.js"></script>
+  <script type="module" src="main.js"></script>
+</body>
 </html>

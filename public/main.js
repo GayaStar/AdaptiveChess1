@@ -1,10 +1,9 @@
-// main.js
-
 import {
   setPlayerRating,
   setStockfishLevel,
   setStockfishDepth,
-  setUserId
+  setUserId,
+  setIsRLGame
 } from './state.js';
 
 import { loadStockfish, updateStockfishLevel } from './stockfish.js';
@@ -16,7 +15,7 @@ import { startNewGame } from './game.js';
   try {
     const res = await fetch('/user', {
       method: 'GET',
-      credentials: 'include'  // ✅ Include session cookie
+      credentials: 'include'
     });
 
     if (!res.ok) {
@@ -27,14 +26,21 @@ import { startNewGame } from './game.js';
 
     const data = await res.json();
 
-    // ✅ Set player info in state
-    setPlayerRating(data.rating || 1000);
+    const rating = data.rating || 1000;
+    const isRL = rating <= 1200;
+
+    // ✅ Set initial state
+    setPlayerRating(rating);
     setStockfishLevel(typeof data.stockfishLevel === 'number' ? data.stockfishLevel : 0);
     setStockfishDepth(typeof data.stockfishDepth === 'number' ? data.stockfishDepth : 5);
-    setUserId(data.username || 'guest');  // ✅ Save user_id for RL agent
+    setUserId(data.username || 'guest');
+    setIsRLGame(isRL);  // ✅ Automatically choose opponent
 
-    await loadStockfish();
-    updateStockfishLevel(data.stockfishLevel, false);
+    if (!isRL) {
+      await loadStockfish();
+      updateStockfishLevel(data.stockfishLevel, false);
+    }
+
     initializeBoard();
     setupUIEvents();
     startNewGame();

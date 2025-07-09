@@ -383,3 +383,50 @@
   font-size: 1rem;
   margin-top: 0.5rem;
 }
+
+/* Ensure chessboard-area is relatively positioned */
+.chessboard-area {
+  position: relative;
+}
+
+/* Promotion ribbon centered over board */
+#promotionOverlay {
+  position: absolute;
+  z-index: 99;
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 2px solid #444;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Hide when not needed */
+#promotionOverlay.hidden {
+  display: none !important;
+}
+
+/* Style each promo piece */
+.promo-piece {
+  width: 48px;
+  height: 48px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  transition: border-color 0.2s;
+}
+
+.promo-piece:hover {
+  border-color: red;
+}
+
+/* Utility to hide any element */
+.hidden {
+  display: none !important;
+}

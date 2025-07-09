@@ -4,8 +4,6 @@ import {
     getBoard,
     setBoard,
     hasGameEnded,
-    isStockfishThinking,
-    setStockfishThinking,
     getPlayerRating
 } from './state.js';
 
@@ -13,21 +11,37 @@ import { makeStockfishMove } from './stockfish.js';
 import { makeRLMove } from './rl_agent.js'; // ✅ RL agent support
 import { updateUI, updateStatus } from './ui.js';
 
-export function initializeBoard() {
-  const config = {
-    draggable: true,
-    position: 'start',
-    pieceTheme: typeof wikipedia_piece_theme !== 'undefined' ? wikipedia_piece_theme : undefined,
-    showNotation: false, 
-    onDragStart,
-    onDrop,
-    onMoveEnd,
-    onSnapEnd
-  };
+let pendingPromotion = null;
 
-  const board = Chessboard('myBoard', config);
-  setBoard(board);
-  $(window).resize(board.resize);
+export function initializeBoard() {
+    const config = {
+        draggable: true,
+        position: 'start',
+        pieceTheme: typeof wikipedia_piece_theme !== 'undefined' ? wikipedia_piece_theme : undefined,
+        showNotation: false,
+        onDragStart,
+        onDrop,
+        onMoveEnd,
+        onSnapEnd
+    };
+
+    const board = Chessboard('myBoard', config);
+    setBoard(board);
+    $(window).resize(board.resize);
+
+    // ⬇️ Setup promotion click listener
+    document.getElementById('promotionOverlay').addEventListener('click', (e) => {
+        if (!e.target.classList.contains('promo-piece')) return;
+
+        const piece = e.target.dataset.piece;
+        if (pendingPromotion) {
+            const { source, target } = pendingPromotion;
+            makeMoveWithPromotion(source, target, piece);
+            pendingPromotion = null;
+        }
+
+        document.getElementById('promotionOverlay').classList.add('hidden');
+    });
 }
 
 function onDragStart(source, piece) {
@@ -45,14 +59,32 @@ function onDragStart(source, piece) {
 
 function onDrop(source, target) {
     const game = getGame();
+    const piece = game.get(source);
+
+    const isPromotionMove = piece?.type === 'p' &&
+        ((piece.color === 'w' && target[1] === '8') ||
+         (piece.color === 'b' && target[1] === '1'));
+
+    if (isPromotionMove) {
+        pendingPromotion = { source, target, color: piece.color };
+        showPromotionOverlay(piece.color);
+        return;
+    }
+
+    return makeMoveWithPromotion(source, target, 'q'); // fallback to queen
+}
+
+function makeMoveWithPromotion(from, to, promotion) {
+    const game = getGame();
     const move = game.move({
-        from: source,
-        to: target,
-        promotion: 'q' // always promote to queen by default
+        from,
+        to,
+        promotion
     });
 
     if (!move) return 'snapback';
 
+    document.getElementById('promotionOverlay').classList.add('hidden');
     highlightLastMove(move, true);
     updateUI();
 
@@ -61,15 +93,15 @@ function onDrop(source, target) {
         return;
     }
 
-    setTimeout(makeEngineMove, 250); // ✅ Use dynamic engine logic
+    setTimeout(makeEngineMove, 250);
 }
 
 function makeEngineMove() {
     const rating = getPlayerRating();
     if (rating < 1200) {
-        makeRLMove(rating); // RL agent for lower-rated players
+        makeRLMove(rating);
     } else {
-        makeStockfishMove(); // Stockfish for 1200+
+        makeStockfishMove();
     }
 }
 
@@ -101,3 +133,30 @@ function highlightSquare(square, style) {
 export function clearHighlights() {
     $('#myBoard .square-55d63').css('background', '');
 }
+
+// 💡 New function to show promotion ribbon
+function showPromotionOverlay(color) {
+    const overlay = document.getElementById('promotionOverlay');
+    overlay.innerHTML = '';
+
+    ['q', 'r', 'b', 'n'].forEach(type => {
+        const piece = document.createElement('div');
+        piece.classList.add('promo-piece');
+        piece.dataset.piece = type;
+        piece.style.backgroundImage = `url('pieces/${color}${type.toUpperCase()}.png')`;
+        overlay.appendChild(piece);
+    });
+
+    overlay.classList.remove('hidden');
+}
+
+// 👇 Promotion selection listener now moved to board.js
+document.getElementById('promotionOverlay').addEventListener('click', e => {
+  if (!pendingPromotion || !e.target.classList.contains('promo-piece')) return;
+
+  const piece = e.target.dataset.piece;
+  const { source, target } = pendingPromotion;
+  makeMoveWithPromotion(source, target, piece);
+  pendingPromotion = null;
+  document.getElementById('promotionOverlay').classList.add('hidden');
+});

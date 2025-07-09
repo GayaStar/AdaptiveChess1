@@ -10,14 +10,12 @@ import {
   hasGameEnded,
   setGameEnded,
   isGameSaved,
-  setGameSaved
+  setGameSaved,
+  isRLGame
 } from './state.js';
 
 import { updateStockfishLevel } from './stockfish.js';
 import { saveGameToDB } from './game.js';
-
-const capturedByWhite = [];
-const capturedByBlack = [];
 
 export function updateUI() {
   $('#playerRating').text(getPlayerRating());
@@ -64,11 +62,11 @@ export function updateStatus() {
   $('#status').text(status);
 
   if (game.game_over()) {
-    $('#analyzeBtn').show();
-    $('#analysisResult').show();
+    $('#analyzeBtn').removeClass('hidden').show();
+    $('#analysisResult').removeClass('hidden').show();
   } else {
-    $('#analyzeBtn').hide();
-    $('#analysisResult').html('');
+    $('#analyzeBtn').addClass('hidden').hide();
+    $('#analysisResult').addClass('hidden').html('');
   }
 }
 
@@ -76,9 +74,33 @@ function updateRatings(result) {
   const playerRating = getPlayerRating();
   const stockfishRating = 1200 + getStockfishLevel() * 100;
   let updatedRating = playerRating;
+
+  // If playing against RL agent, only update player rating
+  if (isRLGame()) {
+    if (typeof result === 'boolean') {
+      updatedRating += result ? 25 : -15;
+    } else {
+      updatedRating += 0; // draw
+    }
+
+    updatedRating = Math.max(100, updatedRating);
+    setPlayerRating(updatedRating);
+
+    fetch('/update_rating', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ rating: updatedRating })
+    });
+
+    $('#playerRating').text(updatedRating);
+    return;
+  }
+
+  // Stockfish-based opponent: update rating + level/depth
   let level = getStockfishLevel();
   let depth = getStockfishDepth();
-  
+
   const expected = 1 / (1 + Math.pow(10, (stockfishRating - playerRating) / 400));
 
   if (typeof result === 'boolean') {
@@ -112,7 +134,7 @@ function updateRatings(result) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ stockfishLevel: level, stockfishDepth: depth})
+    body: JSON.stringify({ stockfishLevel: level, stockfishDepth: depth })
   });
 
   $('#playerRating').text(updatedRating);
@@ -137,7 +159,8 @@ function saveGameOnce() {
 export function updateMoveList() {
   const game = getGame();
   const history = game.history({ verbose: true });
-    // 🔁 Reset captured piece containers
+
+  // 🔁 Reset captured piece containers
   document.getElementById('capturedWhite').innerHTML = '';
   document.getElementById('capturedBlack').innerHTML = '';
 
@@ -155,7 +178,6 @@ export function updateMoveList() {
     const black = blackMove ? formatMove(blackMove) : '';
     if (blackMove) updateCapturedPieces(blackMove);
 
-
     html += `<div>${moveNum}. ${white} ${black}</div>`;
   }
 
@@ -168,11 +190,9 @@ function formatMove(move) {
 
   if (move.captured) {
     const isWhite = move.color === 'w';
-    const capturedPiece = move.captured.toUpperCase(); // 'P', 'Q', etc.
-    const prefix = isWhite ? 'b' : 'w'; // captured piece color (opposite of the mover)
-    const pieceKey = `${prefix}${capturedPiece}`; // e.g., 'bP' or 'wQ'
-
-    // Assuming images are inside ./pieces/ directory as bP.png, wQ.png etc.
+    const capturedPiece = move.captured.toUpperCase();
+    const prefix = isWhite ? 'b' : 'w';
+    const pieceKey = `${prefix}${capturedPiece}`;
     const pieceImageURL = `./pieces/${pieceKey}.png`;
 
     captureImage = ` <img src="${pieceImageURL}" alt="${pieceKey}" style="width:18px; height:18px; vertical-align:middle;" />`;
@@ -180,7 +200,6 @@ function formatMove(move) {
 
   return `${move.san}${captureImage}`;
 }
-
 
 export function updateRatingRL() {
   const game = getGame();
@@ -201,7 +220,6 @@ export function updateRatingRL() {
   });
 }
 
-// ✅ Optional: speak move out loud
 export function speakSAN(san) {
   const text = formatSANForSpeech(san);
   const utter = new SpeechSynthesisUtterance(text);
