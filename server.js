@@ -8,7 +8,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 
 const app = express();
-const PORT = 8080;
+const PORT = 8081;
 const MONGO_URI = 'mongodb://localhost:27017';
 const DB_NAME = 'chess_app';
 
@@ -178,6 +178,7 @@ app.post('/logout', (req, res) => {
 });
 
 // Add after other endpoints
+/*
 app.get('/user_games', requireAuth, async (req, res) => {
   try {
     const gamesCollection = db.collection('games');
@@ -206,9 +207,88 @@ app.get('/user_games', requireAuth, async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 });
+*/
+app.get('/user_games', requireAuth, async (req, res) => {
+  try {
+    const gamesCollection = db.collection('games');
+    const games = await gamesCollection.find({ username: req.session.username })
+      .sort({ timestamp: 1 })
+      .toArray();
+
+    const total = games.length;
+    const ratings = games.map(g => g.rating);
+    const timestamps = games.map(g => g.timestamp);
+
+    let wins = 0, losses = 0, draws = 0;
+    for (const g of games) {
+      if (g.result === "1-0") wins++;
+      else if (g.result === "0-1") losses++;
+      else if (g.result === "1/2-1/2") draws++;
+    }
+
+    const latest = [...games].sort((a, b) => b.timestamp - a.timestamp).slice(0, 2);
+
+    res.json({
+      total,
+      wins,
+      losses,
+      draws,
+      ratings,
+      timestamps,
+      latest: latest.map(g => ({
+        moves: g.moves,
+        result: g.result,
+        rating: g.rating,
+        timestamp: g.timestamp
+      }))
+    });
+  } catch (err) {
+    res.status(500).json({ msg: "Server error" });
+  }
+});
 
 // Server setup
 const server = http.createServer(app);
+// Clean frontend routes
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/homePage.html'));
+});
+
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/login.html'));
+});
+
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/signup.html'));
+});
+
+app.get('/learn_notation', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/learn_notation.html'));
+});
+
+app.get('/learn_special', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/learn_special.html'));
+});
+
+app.get('/learn', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/learn.html'));
+});
+
+app.get('/homePage', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/homePage.html'));
+});
+
+
+app.get('/play', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
+});
+
+
+app.get('/profile', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/profile.html'));
+});
+// Add more routes here as needed...
+
 server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/homePage.html`);
+  console.log(`Server running at http://localhost:${PORT}/homePage`);
 });
