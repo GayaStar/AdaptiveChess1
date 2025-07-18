@@ -389,6 +389,45 @@
   position: relative;
 }
 
+/* Horizontal file labels */
+.file-labels {
+    position: absolute;
+    top: -26px; /* Adjust to match your board's spacing */
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    z-index: 10;
+    pointer-events: none;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    color: #ffffff;
+}
+
+/* Vertical rank labels */
+.rank-labels {
+    position: absolute;
+    left: -24px; /* Adjust to match your board's spacing */
+    top: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 10;
+    pointer-events: none;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    color: #ffffff;
+}
+
+/* Optional: a bit of margin for pretty look */
+.file-labels span,
+.rank-labels span {
+    margin: 0 2px;
+    padding: 1px 4px;
+    user-select: none;
+}
+
 /* Promotion ribbon centered over board */
 #promotionOverlay {
   position: absolute;
@@ -429,4 +468,16 @@
 /* Utility to hide any element */
 .hidden {
   display: none !important;
+}
+.selected-piece {
+  box-shadow: 0 0 0 4px #42f57b inset !important; /* bright green */
+}
+.valid-move-highlight {
+  box-shadow: 0 0 0 4px #42f57b inset !important; /* bright green */
+}
+.last-move-player {
+  background: rgba(66, 245, 123, 0.4) !important; /* light green */
+}
+.last-move-engine {
+  background: rgba(66, 245, 123, 0.3) !important; /* even lighter green */
 }

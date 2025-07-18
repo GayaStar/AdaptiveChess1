@@ -16,10 +16,11 @@ import {
 
 import { makeRLMove } from './rl_agent.js';
 import { updateUI } from './ui.js';
-import { clearHighlights } from './board.js';
+import { clearHighlights, initializeBoard } from './board.js';
 import { makeStockfishMove } from './stockfish.js';
 
-export function startNewGame() {
+export function startNewGame(color='w') {
+    initializeBoard(color);
     $('#move-list').show();
     $('#analysisResult').hide();
 
@@ -77,7 +78,7 @@ export function switchPlayerColor(color) {
     setPlayerColor(color);
     const board = getBoard();
     board.orientation(color === 'w' ? 'white' : 'black');
-    startNewGame();  // restart with new color
+    startNewGame(color); // restart with new color
 }
 
 export function saveGameToDB(moves, result) {
