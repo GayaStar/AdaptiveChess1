@@ -159,7 +159,7 @@
   }
 
   #myBoard {
-    width: 480px;
+    width: 600px;
   }
 
   .file-labels {
@@ -224,7 +224,7 @@
   }
 
   #move-list {
-    height: 160px;
+    height: 400px;
     overflow-y: auto;
     background: #222;
     border: 1px solid #555;
@@ -295,7 +295,7 @@
 }
 
 .player-name {
-  font-weight: 700;
+  font-weight: 900;
 }
 
 .captured-pieces {
@@ -348,7 +348,7 @@
   padding: 0.5rem;
   color: #facc15;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 1.2rem;
 }
 
 .captured-pieces {
@@ -367,14 +367,14 @@
   background: var(--glass, rgba(36, 41, 68, 0.54));
   padding: 1rem;
   border-radius: 12px;
-  width: 300px;
+  width: 400px;
   max-width: 90vw;
   color: #e5e6ff;
   box-shadow: 0 0 12px #0008;
 }
 
 .move-list-box {
-  max-height: 300px;
+  height: 300px;
   overflow-y: auto;
   padding: 0.5rem;
   border: 1px solid #5eead455;
