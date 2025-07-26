@@ -27,11 +27,11 @@ class HybridChessAgent:
             is_check = board.is_check()
             board.pop()
 
-            if user_elo >= 700 and is_checkmate:
+            if user_elo >= 900 and is_checkmate:
                 tactical_moves.append((move, 3))
             elif user_elo >= 800 and board.is_capture(move):
                 tactical_moves.append((move, 2))
-            elif user_elo >= 900 and is_check:
+            elif user_elo >= 700 and is_check:
                 tactical_moves.append((move, 1))
 
         if tactical_moves:
