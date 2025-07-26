@@ -1,42 +1,52 @@
 # adaptiveChess
+
 this is a reinforcement+stockfish chess website (under progress)
 
 Frontend Module Descriptions (public/js/)
 
-main.js:	Entry point for the app. Fetches session data, initializes Stockfish, board, and sets up UI event listeners.
+main.js:
+Entry point for the app. Initializes the chessboard, fetches session/user data, and sets up UI interactions including voice input. Instantiates Stockfish via Web Workers.
 
-state.js:	Centralized state manager. Exposes getter/setter functions for global game state variables like board, game, rating, etc.
+state.js:
+Manages global application state (board, game object, rating, session info). Provides accessor methods for use across modules.
 
-board.js:	Initializes the chessboard and handles user drag/drop, move validation, and visual move highlighting.
+board.js:
+Initializes the interactive chessboard (via Chessboard.js), handles click-based move input, highlights valid and recent moves, and manages pawn promotion UI.
 
-game.js:	Manages core gameplay actions like starting a new game, undoing moves, switching player color, and saving games to the backend.
+game.js:
+Controls overall gameplay flow: starting/resetting games, undoing moves, switching player colors, and saving game data to the backend.
 
-stockfish.js:	Loads the Stockfish engine, communicates moves, adjusts difficulty level, and handles its turn logic.
+stockfish.js:
+Runs the Stockfish engine as a Web Worker, receives engine responses, and adjusts difficulty based on user performance (depth control). Coordinates AI move execution.
 
-ui.js:	Updates player ratings, move list, and game status. Also calculates ELO changes and triggers game-over UI states.
+analysis.js:
+Evaluates each player move using Stockfish’s centipawn loss and best move prediction. Labels user moves as "Good", "Inaccuracy", "Mistake", or "Blunder". Displays feedback in a categorized format.
 
-analysis.js:	Analyzes played moves using Stockfish. Labels them as "Good", "Mistake", or "Blunder" and provides best alternatives.
+utils.js:
+Converts move notation between SAN and UCI formats. Includes helper functions like ELO score calculation and basic transformation logic for analysis and training.
 
-utils.js:	Provides helper functions to convert SAN ⇄ UCI notation and calculate expected score using ELO ratings.
+ui.js:
+Updates dynamic UI elements — move list, player ratings, game status, and final result. Triggers visual game-end states and manages adaptive feedback messages.
 
-ui-events.js:	Binds event listeners to all UI buttons like "New Game", "Undo", "Play as White/Black", and "Analyze".
+ui-events.js:
+Binds UI buttons like New Game, Undo, Analyze, and Play as White/Black to corresponding logic. Also hooks into analysis and voice recognition toggles.
 
 Backend (server.js)
-Endpoint	Description
+Endpoint Description
 
-POST /signup	Registers a new user (with hashed password). Initializes rating and Stockfish settings.
+POST /signup Registers a new user (with hashed password). Initializes rating and Stockfish settings.
 
-POST /login	Authenticates users and starts a session.
+POST /login Authenticates users and starts a session.
 
-POST /logout	Destroys the session and logs out the user.
+POST /logout Destroys the session and logs out the user.
 
-GET /user	Returns user profile including rating, Stockfish level/depth. Requires authentication.
+GET /user Returns user profile including rating, Stockfish level/depth. Requires authentication.
 
-POST /update_rating	Updates the user's ELO rating.
+POST /update_rating Updates the user's ELO rating.
 
-POST /update_stockfish	Updates Stockfish difficulty settings for the user.
+POST /update_stockfish Updates Stockfish difficulty settings for the user.
 
-POST /save_game	Saves game history, result, and rating to MongoDB.
+POST /save_game Saves game history, result, and rating to MongoDB.
 
 🛠 Setup Instructions
 Install dependencies:
