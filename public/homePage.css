@@ -193,21 +193,26 @@ main {
 }
 
 .action-icon {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 1.1rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #23243a 60%, #9f88ff22 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 3px 18px #9f88ffaa;
-  transition: background 0.2s;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #eee;       /* optional background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
-.action-icon-play { border: 2.5px solid var(--mint);}
-.action-icon-learn { border: 2.5px solid var(--violet);}
-.action-icon img { width: 38px; }
 
+.action-icon img {
+    width: 200%;
+    height: 100%;
+    object-fit: contain;          /* 👈 shows full image inside the circle */
+    border-radius: 50%;           /* ensures the image shape follows the circle */
+    display: block;
+}
+.action-icon-play { border: 2.5px solid var(--violet);}
+.action-icon-learn { border: 2.5px solid var(--violet);}
+.action-icon-profile { border: 2.5px solid var(--violet);}
 .action-title {
   font-size: 1.18rem;
   font-weight: 800;

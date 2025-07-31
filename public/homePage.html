@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <title>Home - Adaptive Chess</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="icon" href="https://img.icons8.com/ios-filled/50/9f88ff/chess-king.png">
+    <link rel="icon" href="public/assets/indeximg.jpg">
     <link rel="stylesheet" href="homePage.css" />
 </head>
 <body>
     <div class="bg-animated"></div>
     <nav class="navbar">
         <a href="/homePage" class="brand">
-            <img src="https://img.icons8.com/ios-filled/48/9f88ff/chess-king.png" alt="Chess Logo"/>
+            <img src="/assets/indeximg.jpg" alt="Chess Logo"/>
             <span>Adaptive Chess</span>
         </a>
         <div class="navbar-menu" id="navbar-menu"></div>
@@ -30,16 +30,17 @@
         </section>
         <section class="card-row">
             <div class="action-card" onclick="goToPlay()">
-                <div class="action-icon action-icon-play">
-                    <img src="https://img.icons8.com/color/96/5eead4/chess-pawn.png" alt="Play Chess">
-                </div>
+                <div class="action-icon">
+    <img src="assets/playimg.jpg" alt="Play Chess">
+</div>
+
                 <div class="action-title">Play Chess</div>
                 <div class="action-desc">Face smarter AI every game and track your progress.</div>
                 <a href="/play" class="action-link">Start Playing</a>
             </div>
             <div class="action-card" onclick="goToLearn()">
                 <div class="action-icon action-icon-learn">
-                    <img src="https://img.icons8.com/color/96/9f88ff/chess-knight.png" alt="Learn Chess">
+                    <img src="assets/learnimg.jpg" alt="Learn Chess">
                 </div>
                 <div class="action-title">Learn Chess</div>
                 <div class="action-desc">See how each piece moves and master chess notation.</div>
