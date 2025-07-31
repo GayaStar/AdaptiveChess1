@@ -237,7 +237,7 @@
   /* Analysis Panel */
   .analysis-output {
     margin-top: 10px;
-    max-height: 160px;
+    max-height: 350px;
     overflow-y: auto;
   }
 

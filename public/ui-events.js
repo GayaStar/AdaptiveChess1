@@ -46,7 +46,7 @@ document.getElementById('speakMoveBtn').addEventListener('click', () => {
       return;
     }
 
-    // ✅ Use RL or Stockfish based on rating
+    // Use RL or Stockfish based on rating
     const rating = getPlayerRating();
     if (rating < 1200) {
       makeRLMove(rating);

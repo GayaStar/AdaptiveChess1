@@ -33,7 +33,7 @@ export function updateStatus() {
   if (game.in_checkmate()) {
     if (!hasGameEnded()) {
       const playerWon = game.turn() !== playerColor[0];
-      status = playerWon ? 'Congratulations! You won!' : 'Game over, Stockfish wins!';
+      status = playerWon ? 'Congratulations! You won!' : 'Game over, Agent wins!';
       updateRatings(playerWon);
       saveGameOnce();
       setGameEnded(true);
@@ -55,7 +55,7 @@ export function updateStatus() {
       status = $('#status').text();
     }
   } else {
-    status = game.turn() === playerColor[0] ? 'Your turn' : 'Stockfish is thinking...';
+    status = game.turn() === playerColor[0] ? 'Your turn' : 'Agent is thinking...';
     setGameEnded(false);
   }
 

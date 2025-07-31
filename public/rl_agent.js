@@ -20,11 +20,11 @@
             });
 
             if (!res.ok) {
-                const errText = await res.text(); // 💡 show real server error
+                const errText = await res.text(); 
                 throw new Error(`Server responded with ${res.status}: ${errText}`);
             }
 
-            const data = await res.json(); // 💥 this was failing
+            const data = await res.json(); 
             const moveUci = data.move;
 
             const move = game.move({

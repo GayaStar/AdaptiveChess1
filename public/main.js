@@ -29,12 +29,11 @@ import { startNewGame } from './game.js';
     const rating = data.rating || 1000;
     const isRL = rating <= 1200;
 
-    // ✅ Set initial state
     setPlayerRating(rating);
     setStockfishLevel(typeof data.stockfishLevel === 'number' ? data.stockfishLevel : 0);
     setStockfishDepth(typeof data.stockfishDepth === 'number' ? data.stockfishDepth : 5);
     setUserId(data.username || 'guest');
-    setIsRLGame(isRL);  // ✅ Automatically choose opponent
+    setIsRLGame(isRL);
 
     if (!isRL) {
       await loadStockfish();

@@ -10,10 +10,10 @@ let gameEnded = false;
 let gameSaved = false;
 const API = 'http://localhost:8081';
 
-// 🧠 RL Agent flag
+// RL Agent flag
 let rlGame = false;
 
-// 🧑‍💻 User info
+// User info
 let userId = null;
 
 // ==== Game and Board Access ====

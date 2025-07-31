@@ -55,7 +55,6 @@ export function undoMove() {
 
     if (game.history().length <= 0) return;
 
-    // ❌ Stop Stockfish thinking, if needed
     if (isStockfishThinking()) {
         const sf = getStockfish();
         if (sf) sf.postMessage('stop');
