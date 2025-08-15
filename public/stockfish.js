@@ -60,16 +60,25 @@ export function makeStockfishMove() {
     const game = getGame();
     const stockfish = getStockfish();
 
+    // If stockfish is not yet loaded, load it and make the move after it's ready
     if (!stockfish) {
-        console.warn('Stockfish is not initialized yet.');
+        console.warn("Stockfish not initialized — loading now...");
+        loadStockfish()
+            .then(() => {
+                console.log("Stockfish loaded, now making move...");
+                makeStockfishMove();
+            })
+            .catch(err => console.error("Stockfish failed to load", err));
         return;
     }
 
+    // If game already ended, stop
     if (game.game_over()) {
         stockfish.postMessage('stop');
         return;
     }
 
+    // Otherwise, make the move
     setStockfishThinking(true);
     stockfish.postMessage('ucinewgame');
     stockfish.postMessage(`position fen ${game.fen()}`);
@@ -88,7 +97,7 @@ function onStockfishMessage(message) {
         if (match && match[1]) {
             const moveString = match[1];
             const originalFen = game.fen(); // Capture FEN before making move
-            
+
             // Make the move on a temporary game instance for SAN conversion
             const tempGame = new Chess(originalFen);
             const tempMove = tempGame.move({
@@ -99,7 +108,7 @@ function onStockfishMessage(message) {
 
             if (tempMove) {
                 const san = tempMove.san; // Get accurate SAN from temporary game
-                
+
                 // Now make the actual move on the real game
                 const realMove = game.move(tempMove);
                 if (realMove && board) {

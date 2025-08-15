@@ -28,7 +28,7 @@ user_agents = {}
 
 def get_agent(user_id):
     if user_id not in user_agents:
-        # ✅ Resolve absolute path to model
+        # Resolve absolute path to model
         base_dir = os.path.dirname(os.path.abspath(__file__))  # This is the folder of app.py
         model_path = os.path.join(base_dir, 'model', 'chess_rl_model_final1.pth')
 

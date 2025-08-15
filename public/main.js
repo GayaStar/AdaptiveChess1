@@ -27,7 +27,7 @@ import { startNewGame } from './game.js';
     const data = await res.json();
 
     const rating = data.rating || 1000;
-    const isRL = rating <= 1200;
+    const isRL = rating < 1200;
 
     setPlayerRating(rating);
     setStockfishLevel(typeof data.stockfishLevel === 'number' ? data.stockfishLevel : 0);
