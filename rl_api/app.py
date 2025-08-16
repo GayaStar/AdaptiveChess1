@@ -53,7 +53,7 @@ def login():
     return jsonify({'message': 'Logged in', 'user_id': user_id})
 
 # Initialize the hybrid agent once
-agent = HybridChessAgent(model_path="model/chess_rl_model_final1.pth", stockfish_path="stockfish.exe")
+agent = HybridChessAgent(model_path="model/chess_rl_model_final1.pth", stockfish_path="stockfish-ubuntu-x86-64-avx2")
 
 @app.route("/rl-move", methods=["POST"])
 def rl_move():
