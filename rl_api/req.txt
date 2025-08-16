@@ -3,3 +3,4 @@ Flask-Cors==3.0.10
 python-chess==1.999
 torch==2.0.1
 requests
+numpy>=1.21.5,<1.27
