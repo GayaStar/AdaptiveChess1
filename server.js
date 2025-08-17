@@ -9,14 +9,14 @@ const MongoStore = require('connect-mongo');
 
 const app = express();
 const PORT = 8081;
-const MONGO_URI = 'mongodb://localhost:27017';
+const MONGO_URI = 'mongodb+srv://Gayatri:Gayatri@cluster0.lqjncky.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 const DB_NAME = 'chess_app';
 
 let db, usersCollection;
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:8080',
+  origin: 'https://adaptivechess1.onrender.com',
   credentials: true
 }));
 app.use(express.json());
@@ -290,5 +290,5 @@ app.get('/profile', (req, res) => {
 // Add more routes here as needed...
 
 server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/homePage`);
+  console.log(`Server running at https://adaptivechess1.onrender.com/homePage`);
 });

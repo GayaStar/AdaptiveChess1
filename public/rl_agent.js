@@ -12,7 +12,7 @@
         const userId = getUserId();
         const elo=getPlayerRating();
         try {
-            const res = await fetch('http://localhost:5001/rl-move', {
+            const res = await fetch('https://adaptivechess-flask.onrender.com/rl-move', {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
